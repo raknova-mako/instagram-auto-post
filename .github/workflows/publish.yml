@@ -1,0 +1,76 @@
+name: 承認されたものを投稿する
+
+on:
+  schedule:
+    # 毎日 19:00（日本時間）。GitHubはUTCで動くので10:00を指定する
+    - cron: "0 10 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: 承認済みの下書きを探す
+        id: find
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          number=$(gh issue list --label approved --state open --limit 1 --json number --jq '.[0].number')
+          if [ -z "$number" ] || [ "$number" = "null" ]; then
+            echo "承認されたものがありません。今日は投稿しません。"
+            echo "found=no" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          title=$(gh issue view "$number" --json title --jq .title)
+          date=$(echo "$title" | grep -oE '[0-9]{4}-[0-9]{2}-[0-9]{2}')
+          if [ -z "$date" ]; then
+            echo "Issueのタイトルから日付を読み取れませんでした: $title"
+            echo "found=no" >> "$GITHUB_OUTPUT"
+            exit 1
+          fi
+          echo "found=yes"      >> "$GITHUB_OUTPUT"
+          echo "number=$number" >> "$GITHUB_OUTPUT"
+          echo "date=$date"     >> "$GITHUB_OUTPUT"
+          echo "承認済み: Issue #$number（$date）"
+
+      - name: 投稿する
+        if: steps.find.outputs.found == 'yes'
+        env:
+          IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
+          IG_USER_ID: ${{ secrets.IG_USER_ID }}
+        run: node scripts/publish.mjs content/posts/${{ steps.find.outputs.date }}.json
+
+      - name: 結果を報告してIssueを閉じる
+        if: steps.find.outputs.found == 'yes'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          link=$(cat permalink.txt 2>/dev/null || echo "")
+          echo "✅ 投稿しました！" > comment.md
+          echo "" >> comment.md
+          echo "$link" >> comment.md
+          gh issue comment ${{ steps.find.outputs.number }} --body-file comment.md
+          gh issue close ${{ steps.find.outputs.number }}
+
+      - name: ネタ帳に [済] を付ける
+        if: steps.find.outputs.found == 'yes'
+        run: |
+          node scripts/mark-topic-done.mjs content/posts/${{ steps.find.outputs.date }}.json
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add content/topics.md
+          git diff --staged --quiet || git commit -m "投稿済み ${{ steps.find.outputs.date }}"
+          git push

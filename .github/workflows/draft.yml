@@ -1,0 +1,83 @@
+name: 下書きを作る
+
+on:
+  schedule:
+    # 毎日 07:00（日本時間）。GitHubはUTCで動くので22:00を指定する
+    - cron: "0 22 * * *"
+  workflow_dispatch:        # 手動でも実行できる
+  issues:
+    types: [labeled]        # retry ラベルが付いたら作り直す
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  draft:
+    # 定期実行・手動実行のときと、retry ラベルが付いたときだけ動かす
+    if: github.event_name != 'issues' || github.event.label.name == 'retry'
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+
+      - name: 必要なものを入れる
+        run: |
+          npm ci
+          # 日本語フォント（Googleフォントが取れなかったときの保険）
+          sudo apt-get update -qq && sudo apt-get install -y -qq fonts-noto-cjk
+          npx playwright install --with-deps chromium
+
+      - name: 作り直しの場合は前のIssueを閉じる
+        if: github.event_name == 'issues'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh issue close ${{ github.event.issue.number }} --comment "作り直します。新しい下書きを作成中です。"
+
+      - name: 今日の日付
+        id: today
+        run: echo "date=$(TZ=Asia/Tokyo date +%F)" >> "$GITHUB_OUTPUT"
+
+      - name: AIに原稿を書かせる
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          IG_ACCOUNT_NAME: ${{ vars.IG_ACCOUNT_NAME }}
+        run: node scripts/generate.mjs
+
+      - name: 画像を作る
+        run: node scripts/render.mjs content/posts/${{ steps.today.outputs.date }}.json published/${{ steps.today.outputs.date }}
+
+      - name: 画像の公開URLを書き込む
+        run: |
+          node scripts/set-image-urls.mjs \
+            content/posts/${{ steps.today.outputs.date }}.json \
+            published/${{ steps.today.outputs.date }} \
+            https://raw.githubusercontent.com/${{ github.repository }}/main
+
+      - name: GitHubに保存する
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add published content/posts
+          git commit -m "下書き ${{ steps.today.outputs.date }}"
+          git push
+
+      - name: 承認用のIssueを作る
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # ラベルが無ければ作る（初回のみ実際に作成される）
+          gh label create approved --color 0E8A16 --description "この内容で投稿する" --force
+          gh label create retry    --color D93F0B --description "作り直す"           --force
+          gh label create 承認まち  --color FBCA04 --description "確認をお待ちしています" --force
+
+          node scripts/make-issue.mjs content/posts/${{ steps.today.outputs.date }}.json > issue-body.md
+          gh issue create \
+            --title "【承認おねがいします】${{ steps.today.outputs.date }} の投稿" \
+            --body-file issue-body.md \
+            --label 承認まち

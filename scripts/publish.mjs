@@ -10,7 +10,7 @@
  * 画像は「インターネットから見えるURL」である必要がある（Instagramの仕様）。
  * 投稿データの imageUrls に、その公開URLを入れておくこと。
  */
-import { readFileSync } from "node:fs";
+import { readFileSync, writeFileSync } from "node:fs";
 import { loadEnv, requireValue } from "./env.mjs";
 
 const env = loadEnv();
