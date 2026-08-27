@@ -9,7 +9,8 @@ import { THEMES } from "./slides.mjs";
 
 const env = loadEnv();
 const key = requireValue(env, "GEMINI_API_KEY", "Google AI Studio で取得したキーを貼ってください。");
-const model = env.GEMINI_MODEL || "gemini-3.7-flash";
+// 3.7-flash は混雑が慢性化しているため、既定では後回しにする
+const model = env.GEMINI_MODEL || "gemini-3.6-flash";
 const account = env.IG_ACCOUNT_NAME || "@mako_raknova";
 
 const topic = nextTopic();
@@ -112,8 +113,16 @@ const schema = {
 console.log(`テーマ「${topic.theme}」で原稿を書いています…
 `);
 
-/** 混雑時に備えて、リトライと予備モデルを用意する */
-const candidates = [...new Set([model, "gemini-3.6-flash", "gemini-3.5-flash", "gemini-flash-latest"])];
+/** 混雑に備えて、複数のモデルを順に試す（上から順に試す） */
+const candidates = [...new Set([
+  model,
+  "gemini-3.7-flash",
+  "gemini-3.5-flash",
+  "gemini-flash-latest",
+  "gemini-2.5-flash",
+])];
+
+const sleep = (sec) => new Promise((r) => setTimeout(r, sec * 1000));
 
 const askGemini = async (name) => {
   const res = await fetch(
@@ -138,41 +147,49 @@ const askGemini = async (name) => {
 let text = "";
 let usedModel = "";
 
-outer: for (const name of candidates) {
-  for (let attempt = 1; attempt <= 3; attempt++) {
-    const { ok, status, body } = await askGemini(name);
-
-    if (ok) {
-      text = body?.candidates?.[0]?.content?.parts?.map((p) => p.text).join("") ?? "";
-      if (text) {
-        usedModel = name;
-        break outer;
-      }
-      console.log(`   ${name}: 空の返事（理由: ${body?.candidates?.[0]?.finishReason ?? "不明"}）`);
-      continue;
-    }
-
-    // 混雑・回数制限は待って再挑戦する価値がある
-    if (status === 503 || status === 429 || status >= 500) {
-      const wait = attempt * 5;
-      console.log(`   ${name}: 混雑中(${status})。${wait}秒待って再挑戦します（${attempt}/3）`);
-      await new Promise((r) => setTimeout(r, wait * 1000));
-      continue;
-    }
-
-    console.error(`❌ ${name} でエラー (HTTP ${status})`);
-    console.error(`   ${body?.error?.message ?? ""}`);
-    break; // 設定ミス等は再挑戦しても直らないので次のモデルへ
+// 全モデルが混んでいても、少し待って周回し直す（混雑は数分で解けることが多い）
+outer: for (let round = 1; round <= 3 && !text; round++) {
+  if (round > 1) {
+    console.log(`   全モデルが混雑中。90秒待って${round}周目に入ります`);
+    await sleep(90);
   }
-  console.log(`   ${name} は諦めて、次のモデルを試します`);
+
+  for (const name of candidates) {
+    for (let attempt = 1; attempt <= 2; attempt++) {
+      const { ok, status, body } = await askGemini(name);
+
+      if (ok) {
+        text = body?.candidates?.[0]?.content?.parts?.map((p) => p.text).join("") ?? "";
+        if (text) {
+          usedModel = name;
+          break outer;
+        }
+        console.log(`   ${name}: 空の返事（理由: ${body?.candidates?.[0]?.finishReason ?? "不明"}）`);
+        continue;
+      }
+
+      // 混雑・回数制限は待てば直る可能性がある
+      if (status === 429 || status >= 500) {
+        const wait = attempt * 10;
+        console.log(`   ${name}: 混雑中(${status})。${wait}秒待って再挑戦（${attempt}/2）`);
+        await sleep(wait);
+        continue;
+      }
+
+      // 設定ミスなどは待っても直らないので、次のモデルへ
+      console.error(`   ${name}: エラー (HTTP ${status}) ${body?.error?.message ?? ""}`);
+      break;
+    }
+  }
 }
 
 if (!text) {
-  console.error("❌ すべてのモデルで失敗しました。時間をおいて実行し直してください。");
+  console.error("❌ すべてのモデルが混雑していて、原稿を作れませんでした。");
+  console.error("   時間をおいて実行し直してください。");
   process.exit(1);
 }
-console.log(`   使用モデル: ${usedModel}
-`);
+console.log(`   使用モデル: ${usedModel}`);
+console.log("");
 
 let draft;
 try {

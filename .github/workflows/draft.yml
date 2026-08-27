@@ -81,3 +81,16 @@ jobs:
             --title "【承認おねがいします】${{ steps.today.outputs.date }} の投稿" \
             --body-file issue-body.md \
             --label 承認まち
+
+      - name: 失敗したら知らせる
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          echo "今朝の下書きを作れませんでした。" > fail.md
+          echo "" >> fail.md
+          echo "原因の詳細はこちら:" >> fail.md
+          echo "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> fail.md
+          echo "" >> fail.md
+          echo "AIの混雑が原因なら、Actions画面から手動でもう一度実行すれば作れます。" >> fail.md
+          gh issue create --title "⚠️ 下書きの作成に失敗しました" --body-file fail.md
