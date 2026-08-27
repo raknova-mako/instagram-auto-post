@@ -1,0 +1,12 @@
+{
+  "name": "instagram-auto-post",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "check": "node scripts/check-token.mjs"
+  },
+  "dependencies": {
+    "playwright": "^1.62.1"
+  }
+}

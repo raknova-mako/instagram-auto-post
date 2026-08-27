@@ -1,0 +1,201 @@
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap");
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body { width: 1080px; height: 1350px; }
+
+body {
+  background: #fff;
+  font-family: "Noto Sans JP", sans-serif;
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+:root {
+  --ink:      #0F172A;
+  --ink-soft: #475569;
+  --rule:     #E2E8F0;
+  --panel:    #F8FAFC;
+}
+
+/* ===== 共通パーツ ===== */
+.topbar { position: absolute; top: 0; left: 0; right: 0; height: 14px; background: var(--accent); }
+
+.pill {
+  align-self: flex-start;
+  background: var(--accent);
+  color: #fff;
+  font-weight: 700;
+  font-size: 32px;
+  letter-spacing: .04em;
+  padding: 15px 30px;
+  border-radius: 999px;
+}
+
+.page-no {
+  position: absolute;
+  right: 84px; bottom: 52px;
+  font-family: "Roboto Mono", monospace;
+  font-weight: 700;
+  font-size: 28px;
+  color: #94A3B8;
+}
+
+/* ===== 1枚目：表紙 ===== */
+.cover { padding: 92px 88px 76px; height: 100%; }
+
+.cover .headline {
+  font-size: 88px; font-weight: 900; line-height: 1.46;
+  word-break: auto-phrase; line-break: strict;
+}
+.cover .headline mark {
+  background: linear-gradient(transparent 58%, var(--marker) 58%);
+  color: inherit; padding: 0 4px;
+  /* 行をまたいでマーカーが割れないようにする */
+  white-space: nowrap;
+}
+.cover .headline-area { flex: 1; display: flex; align-items: center; }
+
+.cover .sub {
+  border-top: 3px solid var(--rule);
+  padding-top: 44px;
+  font-size: 40px; font-weight: 500; line-height: 1.8; color: var(--ink-soft);
+  word-break: auto-phrase;
+}
+.cover .footer {
+  margin-top: 50px; display: flex; align-items: center; justify-content: space-between;
+}
+.cover .account { font-size: 34px; font-weight: 700; }
+.cover .swipe { font-size: 30px; font-weight: 700; color: var(--accent); }
+
+/* ===== 中面：手順 ===== */
+.step { padding: 76px 88px 118px; height: 100%; }
+
+.step .head { display: flex; align-items: center; gap: 24px; }
+.step .stepno {
+  background: var(--accent); color: #fff;
+  font-family: "Roboto Mono", monospace; font-weight: 700; font-size: 30px;
+  padding: 12px 24px; border-radius: 12px;
+}
+.step .cat { font-size: 30px; font-weight: 700; color: var(--ink-soft); }
+
+.step .title {
+  margin-top: 44px;
+  font-size: 62px; font-weight: 900; line-height: 1.44;
+  word-break: auto-phrase; line-break: strict;
+}
+.step .body {
+  margin-top: 32px;
+  font-size: 36px; font-weight: 500; line-height: 1.85; color: var(--ink-soft);
+  word-break: auto-phrase;
+}
+.step .visual { margin-top: auto; margin-bottom: auto; padding-top: 56px; }
+
+/* 数式ブロック */
+.formula {
+  background: #0F172A; border-radius: 20px; padding: 40px 40px 44px;
+}
+.formula .fx {
+  display: inline-block;
+  font-family: "Roboto Mono", monospace; font-weight: 700; font-size: 24px;
+  color: #0F172A; background: #E2E8F0; border-radius: 8px;
+  padding: 6px 14px; margin-bottom: 24px;
+}
+.formula code {
+  display: block;
+  font-family: "Roboto Mono", monospace; font-weight: 500; font-size: 33px;
+  line-height: 1.7; color: #E2E8F0; word-break: break-all;
+}
+.formula code .k { color: #7DD3FC; }
+.formula code .s { color: #86EFAC; }
+
+/* スプレッドシート風の表 */
+.sheet { border: 3px solid var(--rule); border-radius: 16px; overflow: hidden; }
+.sheet table { width: 100%; border-collapse: collapse; }
+.sheet th, .sheet td {
+  border: 2px solid var(--rule);
+  padding: 20px 22px;
+  font-size: 31px; font-weight: 500; text-align: left;
+  white-space: nowrap;
+}
+.sheet thead th, .sheet tbody th {
+  /* 本物のスプレッドシートに合わせ、列名と行番号の帯だけをグレーにする */
+  background: #E8EAED; color: #5F6368; font-weight: 700;
+  font-family: "Roboto Mono", monospace; font-size: 26px; text-align: center;
+}
+/* 見出し行は「白いセルに太字」。列名の帯と二段に見えないようにする */
+.sheet tbody tr:first-child td { font-weight: 700; background: #fff; }
+.sheet td.hi { background: var(--marker); font-weight: 700; }
+
+.caption-note {
+  margin-top: 22px; font-size: 27px; font-weight: 500; color: #94A3B8;
+}
+
+/* ===== 最終ページ ===== */
+.outro {
+  background: var(--accent); color: #fff;
+  padding: 96px 88px 84px; height: 100%;
+}
+.outro .lead { font-size: 34px; font-weight: 700; opacity: .85; }
+/* 色地の上ではマーカーを白の下線風にする（既定の黄色は使わない） */
+.outro .headline mark {
+  background: linear-gradient(transparent 62%, rgba(255,255,255,.34) 62%);
+  color: #fff; padding: 0 4px;
+}
+.outro .headline {
+  margin-top: 40px;
+  font-size: 76px; font-weight: 900; line-height: 1.48;
+  word-break: auto-phrase; line-break: strict;
+}
+.outro ul { margin-top: 56px; list-style: none; }
+.outro li {
+  display: flex; gap: 22px; align-items: flex-start;
+  font-size: 36px; font-weight: 500; line-height: 1.7;
+  padding: 20px 0; border-top: 2px solid rgba(255,255,255,.28);
+}
+.outro li::before { content: "✓"; font-weight: 900; opacity: .9; }
+.outro .spacer { flex: 1; }
+.outro .cta {
+  background: #fff; color: var(--accent);
+  align-self: flex-start;
+  font-size: 38px; font-weight: 900;
+  padding: 26px 44px; border-radius: 999px;
+}
+
+/* ===== 数式の意味を分解して見せるブロック ===== */
+.explain { display: flex; flex-direction: column; gap: 14px; }
+
+.explain .row {
+  display: flex; align-items: center; gap: 22px;
+  background: var(--panel);
+  border-left: 8px solid var(--accent);
+  border-radius: 12px;
+  padding: 20px 26px;
+}
+.explain .row code {
+  font-family: "Roboto Mono", monospace; font-weight: 700; font-size: 28px;
+  background: #0F172A; color: #E2E8F0;
+  padding: 8px 16px; border-radius: 8px; white-space: nowrap;
+}
+.explain .row span {
+  font-size: 29px; font-weight: 500; line-height: 1.5; color: var(--ink);
+}
+
+/* 分解ページでは数式ブロックを小さめに */
+.explain-formula { margin-bottom: 22px; }
+.explain-formula code { font-size: 27px; }
+.explain-formula .fx { display: none; }
+.explain-formula { padding: 26px 30px; }
+
+
+/* ===== 図が入らない手順ページ（文章だけ） ===== */
+.step--novisual .title { font-size: 74px; }
+.step--novisual .body { font-size: 42px; margin-top: 40px; }
+.step--novisual .text-area {
+  flex: 1; display: flex; flex-direction: column; justify-content: center;
+}
+.step--novisual .caption-note { margin-top: 40px; font-size: 30px; }

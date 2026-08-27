@@ -1,0 +1,7 @@
+# 秘密情報。絶対にコミットしないこと
+.env
+.env.local
+
+node_modules/
+out/
+*.log
