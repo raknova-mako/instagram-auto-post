@@ -3,6 +3,8 @@
  * 使い方: node scripts/render.mjs content/sample.json out
  */
 import { readFileSync, writeFileSync, mkdirSync, rmSync } from "node:fs";
+import { resolve } from "node:path";
+import { pathToFileURL } from "node:url";
 import { chromium } from "playwright";
 import { THEMES, coverHtml, stepHtml, outroHtml } from "./slides.mjs";
 
@@ -34,6 +36,8 @@ const pages = [
 rmSync(outDir, { recursive: true, force: true });
 mkdirSync(outDir, { recursive: true });
 
+const tmpFile = resolve(".render.html");
+
 const browser = await chromium.launch();
 const page = await browser.newPage({
   viewport: { width: WIDTH, height: HEIGHT },
@@ -42,8 +46,20 @@ const page = await browser.newPage({
 
 const files = [];
 for (const [i, html] of pages.entries()) {
-  await page.setContent(html, { waitUntil: "networkidle" });
+  // 同梱フォントを相対パスで読ませるため、一時ファイルとして開く
+  writeFileSync(tmpFile, html, "utf8");
+  await page.goto(pathToFileURL(tmpFile).href, { waitUntil: "networkidle" });
   await page.evaluate(() => document.fonts.ready);
+
+  // フォントを読めたか毎回確認する（失敗すると太字にならず読みにくい画像になる）
+  const fontLoaded = await page.evaluate(() =>
+    document.fonts.check('900 88px "Noto Sans JP"')
+  );
+  if (!fontLoaded) {
+    console.error("❌ フォントを読み込めませんでした。fonts/NotoSansJP.ttf があるか確認してください。");
+    await browser.close();
+    process.exit(1);
+  }
 
   // AIが書いた文章が長すぎても画像からはみ出さないよう、自動で文字を縮める
   await page.evaluate(() => {
@@ -94,6 +110,7 @@ for (const [i, html] of pages.entries()) {
   files.push({ name, kb: Math.round(buffer.length / 1024) });
 }
 await browser.close();
+rmSync(tmpFile, { force: true });
 
 console.log(`✅ ${files.length}枚を書き出しました（${theme.name} / ${theme.accent}）\n`);
 for (const f of files) console.log(`   ${outDir}/${f.name}  ${f.kb}KB`);

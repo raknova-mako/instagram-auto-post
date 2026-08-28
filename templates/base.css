@@ -1,4 +1,19 @@
-@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap");
+/* フォントはリポジトリに同梱したものを使う。
+   ネットワークや実行環境に左右されず、手元とクラウドで必ず同じ見た目になる。 */
+@font-face {
+  font-family: "Noto Sans JP";
+  src: url("fonts/NotoSansJP.ttf") format("truetype");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: block;
+}
+@font-face {
+  font-family: "Roboto Mono";
+  src: url("fonts/RobotoMono.ttf") format("truetype");
+  font-weight: 100 700;
+  font-style: normal;
+  font-display: block;
+}
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 

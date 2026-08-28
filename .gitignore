@@ -5,3 +5,6 @@
 node_modules/
 out/
 *.log
+
+# 画像を作るときの一時ファイル
+.render.html
