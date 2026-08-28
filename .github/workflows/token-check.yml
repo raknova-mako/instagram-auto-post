@@ -1,0 +1,53 @@
+name: トークンの期限を見張る
+
+on:
+  schedule:
+    # 毎週月曜 09:00（日本時間）
+    - cron: "0 0 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: 残り日数を調べる
+        id: check
+        env:
+          IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
+        run: |
+          if node scripts/check-token-age.mjs > warning.md; then
+            echo "warn=no" >> "$GITHUB_OUTPUT"
+          else
+            echo "warn=yes" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: 同じ通知がすでに出ていないか確認する
+        id: existing
+        if: steps.check.outputs.warn == 'yes'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          count=$(gh issue list --label トークン更新 --state open --json number --jq 'length')
+          echo "count=$count" >> "$GITHUB_OUTPUT"
+
+      - name: 期限が近いことを知らせる
+        if: steps.check.outputs.warn == 'yes' && steps.existing.outputs.count == '0'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh label create トークン更新 --color B60205 --description "アクセストークンの更新が必要" --force
+          gh issue create \
+            --title "🔑 Instagramのトークン更新をお願いします" \
+            --body-file warning.md \
+            --label トークン更新
