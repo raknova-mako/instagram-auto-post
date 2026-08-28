@@ -1,0 +1,129 @@
+{
+  "category": "sheets",
+  "account": "@mako_raknova",
+  "topic": "担当者ごとの合計を1行で出す（QUERY関数）",
+  "topicLine": 8,
+  "generatedAt": "2026-08-28T22:26:39.655Z",
+  "cover": {
+    "label": "スプレッドシート術",
+    "headline": "担当ごとの合計、何度も集計してる？<mark>この1行</mark>で解決！",
+    "sub": "データが増えるたびにSUM関数を書き直すのはもう終わり！コピペ1発で自動集計できる方法を徹底解説します！"
+  },
+  "steps": [
+    {
+      "title": "まずは元データを確認！",
+      "body": "B列に担当者名、C列に金額が入った表を用意します！行が増えても自動対応できる設定にします！",
+      "sheet": {
+        "headers": [
+          "日付",
+          "担当",
+          "金額"
+        ],
+        "rows": [
+          [
+            "4/1",
+            "佐藤",
+            "12000"
+          ],
+          [
+            "4/2",
+            "鈴木",
+            "5000"
+          ],
+          [
+            "4/3",
+            "佐藤",
+            "5600"
+          ],
+          [
+            "4/4",
+            "鈴木",
+            "8000"
+          ]
+        ]
+      }
+    },
+    {
+      "title": "集計したいセルにコピペ！",
+      "body": "集計結果を表示したいセルに、以下の数式をそのまま貼り付けてみてください！",
+      "formula": "=QUERY(B2:C, \"select B, sum(C) where B is not null group by B\")",
+      "sheet": {
+        "headers": [
+          "担当",
+          "合計金額"
+        ],
+        "rows": [
+          [
+            "*佐藤",
+            "*17600"
+          ],
+          [
+            "*鈴木",
+            "*13000"
+          ]
+        ]
+      }
+    },
+    {
+      "title": "数式の中身を分解解説！",
+      "body": "難しそうに見えますが、パーツごとに分けるとやってることは超シンプルです！",
+      "explain": [
+        {
+          "part": "=QUERY(B2:C,",
+          "means": "B2からC列全体を使うよ"
+        },
+        {
+          "part": "select B, sum(C)",
+          "means": "担当者と金額の合計を出して"
+        },
+        {
+          "part": "where B is not null",
+          "means": "空欄の行は無視してね"
+        },
+        {
+          "part": "group by B\"",
+          "means": "担当者ごとにまとめてね"
+        }
+      ]
+    },
+    {
+      "title": "行を追加しても自動更新！",
+      "body": "元データの下に新しい行を追加するだけで、集計結果が自動的に更新されます！",
+      "sheet": {
+        "headers": [
+          "担当",
+          "合計金額"
+        ],
+        "rows": [
+          [
+            "*佐藤",
+            "*27600"
+          ],
+          [
+            "*鈴木",
+            "*13000"
+          ]
+        ]
+      }
+    }
+  ],
+  "outro": {
+    "lead": "毎回手動でSUM関数を入れ直す作業から今すぐ卒業しましょう！",
+    "headline": "集計は<mark>1行コピペ</mark>で一発解決！",
+    "bullets": [
+      "QUERY関数で担当別合計",
+      "範囲は行指定なしで自動化",
+      "データ追加でも再計算不要"
+    ],
+    "cta": "保存して試す！"
+  },
+  "caption": "担当者ごとの合計金額を出すとき、フィルターをかけてSUM関数を使ったり、何度も数式をコピーしていませんか？💦\n\n実は、魔法の1行を入力するだけで、担当者ごとの集計表を一瞬で作ることができます！✨\n\nデータが下の行に追加されても自動で集計が更新されるので、一度設定すればずっとラクになりますよ！💡\n\nぜひ試してみてください！\n\n─── 使い方・手順 ───\n\n1️⃣ 集計元の表を確認する\n・B列：担当者名（例: B2から下）\n・C列：金額（例: C2から下）\n※見出しが1行目にある想定です！\n\n2️⃣ 集計結果を表示したいセル（例: E2セル）を選択する\n\n3️⃣ 以下の数式をそのままコピペして貼り付ける！\n\n=QUERY(B2:C, \"select B, sum(C) where B is not null group by B\")\n\nこれだけで、担当者一覧とそれぞれの合計金額がパッと表示されます！🎉\n\n─── 数式の意味（ざっくり解説） ───\n・B2:C → B2からC列の最後まで全部を見る（行数を指定しないのがポイント！）\n・select B, sum(C) → B列（担当）とC列の合計を出してね\n・where B is not null → 空白の行は除外してね\n・group by B → 担当者ごとにまとめてね\n\n─── うまくいかないとき（エラー対処） ───\n⚠️ #VALUE! エラーが出る場合\n→ カッコやダブルクォーテーション（\"）が半角になっているか確認してください！全角が入っていると動かなくなります！\n\n⚠️ #REF! エラーが出る場合\n→ 集計結果が表示される場所に、すでに別の文字や数字が入っていませんか？下や右のセルを空けてからもう一度お試しください！\n\n一度作っておけば毎日の集計作業が劇的に変わります！✨\n忘れないうちに「保存」して、次回の作業で使ってみてくださいね！応援しています！👍\n\n#スプレッドシート #スプレッドシート便利術 #スプレッドシート関数 #QUERY関数 #業務効率化 #時短術 #仕事術 #デスクワーク #エクセル初心者 #オフィスワーク #パソコン仕事 #ラクノーバ",
+  "imageUrls": [
+    "https://raw.githubusercontent.com/raknova-mako/instagram-auto-post/main/published/2026-08-29/01.jpg",
+    "https://raw.githubusercontent.com/raknova-mako/instagram-auto-post/main/published/2026-08-29/02.jpg",
+    "https://raw.githubusercontent.com/raknova-mako/instagram-auto-post/main/published/2026-08-29/03.jpg",
+    "https://raw.githubusercontent.com/raknova-mako/instagram-auto-post/main/published/2026-08-29/04.jpg",
+    "https://raw.githubusercontent.com/raknova-mako/instagram-auto-post/main/published/2026-08-29/05.jpg",
+    "https://raw.githubusercontent.com/raknova-mako/instagram-auto-post/main/published/2026-08-29/06.jpg"
+  ]
+}
