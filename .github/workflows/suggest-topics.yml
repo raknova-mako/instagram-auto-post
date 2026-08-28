@@ -3,7 +3,7 @@ name: ネタ切れを防ぐ
 on:
   schedule:
     # 毎日 08:00（日本時間）。下書き作成の後に走らせる
-    - cron: "0 23 * * *"
+    - cron: "41 23 * * *"
   workflow_dispatch:
 
 permissions:

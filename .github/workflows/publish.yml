@@ -3,7 +3,8 @@ name: 承認されたものを投稿する
 on:
   schedule:
     # 毎日 19:00（日本時間）。GitHubはUTCで動くので10:00を指定する
-    - cron: "0 10 * * *"
+    - cron: "37 10 * * *"   # 19:37（日本時間）本番
+    - cron: "7 12 * * *"    # 21:07（日本時間）予備。1回目が実行されなかった場合の保険
   workflow_dispatch:
 
 permissions:

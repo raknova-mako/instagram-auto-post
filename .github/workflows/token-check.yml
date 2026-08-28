@@ -3,7 +3,7 @@ name: トークンの期限を見張る
 on:
   schedule:
     # 毎週月曜 09:00（日本時間）
-    - cron: "0 0 * * 1"
+    - cron: "26 1 * * 1"
   workflow_dispatch:
 
 permissions:
