@@ -1,0 +1,53 @@
+name: ネタ切れを防ぐ
+
+on:
+  schedule:
+    # 毎日 08:00（日本時間）。下書き作成の後に走らせる
+    - cron: "0 23 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  suggest:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: 残りを数え、少なければ候補を考える
+        id: check
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          if node scripts/suggest-topics.mjs > suggestion.md; then
+            echo "needed=no" >> "$GITHUB_OUTPUT"
+          else
+            echo "needed=yes" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: すでに同じ提案が出ていないか確認する
+        id: existing
+        if: steps.check.outputs.needed == 'yes'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          count=$(gh issue list --label ネタ補充 --state open --json number --jq 'length')
+          echo "count=$count" >> "$GITHUB_OUTPUT"
+
+      - name: ネタの候補を提案する
+        if: steps.check.outputs.needed == 'yes' && steps.existing.outputs.count == '0'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh label create ネタ補充 --color 1D76DB --description "投稿ネタの追加が必要" --force
+          gh issue create \
+            --title "📝 投稿ネタの追加をお願いします" \
+            --body-file suggestion.md \
+            --label ネタ補充
