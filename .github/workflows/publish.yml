@@ -1,10 +1,10 @@
 name: 承認されたものを投稿する
 
+# GitHubの定期実行は数時間ずれることがあり、時刻の指定では19時に投稿できない。
+# そこで30分おきに起動し、毎回「いまが19時以降か」を自分で判断する方式にしている。
 on:
   schedule:
-    # 毎日 19:00（日本時間）。GitHubはUTCで動くので10:00を指定する
-    - cron: "37 10 * * *"   # 19:37（日本時間）本番
-    - cron: "7 12 * * *"    # 21:07（日本時間）予備。1回目が実行されなかった場合の保険
+    - cron: "*/30 * * * *"
   workflow_dispatch:
 
 permissions:
@@ -16,16 +16,35 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: 投稿してよい時間か確認する
+        id: window
+        run: |
+          hour=$(TZ=Asia/Tokyo date +%H)
+          now=$(TZ=Asia/Tokyo date '+%m-%d %H:%M')
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "手動実行なので、時間に関係なく進みます（現在 $now）"
+            echo "ok=yes" >> "$GITHUB_OUTPUT"
+          elif [ "$hour" -ge 19 ]; then
+            echo "現在 $now。19時を過ぎているので投稿できます。"
+            echo "ok=yes" >> "$GITHUB_OUTPUT"
+          else
+            echo "現在 $now。19時前なので何もしません。"
+            echo "ok=no" >> "$GITHUB_OUTPUT"
+          fi
+
       - uses: actions/checkout@v4
+        if: steps.window.outputs.ok == 'yes'
         with:
           ref: main
 
       - uses: actions/setup-node@v4
+        if: steps.window.outputs.ok == 'yes'
         with:
           node-version: "20"
 
       - name: 承認済みの下書きを探す
         id: find
+        if: steps.window.outputs.ok == 'yes'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |

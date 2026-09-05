@@ -1,10 +1,10 @@
 name: 下書きを作る
 
+# GitHubの定期実行は数時間ずれることがあるため、時刻を指定しても当てにならない。
+# 30分おきに起動し、毎回「いまが朝7時以降か」「今日の分がもう出来ているか」を自分で判断する。
 on:
   schedule:
-    # 毎時0分はGitHub側の負荷が高く、実行が破棄されることがあるため0分を避ける。
-    - cron: "23 22 * * *"   # 07:23（日本時間）本番
-    - cron: "23 0 * * *"    # 09:23（日本時間）予備。すでに作成済みなら何もしない
+    - cron: "*/30 * * * *"
   workflow_dispatch:
   issues:
     types: [labeled]        # retry ラベルが付いたら作り直す
@@ -19,14 +19,33 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: 下書きを作ってよい時間か確認する
+        id: window
+        run: |
+          hour=$(TZ=Asia/Tokyo date +%H)
+          now=$(TZ=Asia/Tokyo date '+%m-%d %H:%M')
+          if [ "${{ github.event_name }}" != "schedule" ]; then
+            echo "手動実行または作り直しなので、時間に関係なく進みます（現在 $now）"
+            echo "run=yes" >> "$GITHUB_OUTPUT"
+          elif [ "$hour" -ge 7 ] && [ "$hour" -le 17 ]; then
+            echo "現在 $now。下書きを作ってよい時間です。"
+            echo "run=yes" >> "$GITHUB_OUTPUT"
+          else
+            echo "現在 $now。朝7時前、または夕方以降なので何もしません。"
+            echo "run=no" >> "$GITHUB_OUTPUT"
+          fi
+
       - uses: actions/checkout@v4
+        if: steps.window.outputs.run == 'yes'
 
       - name: 今日の日付
         id: today
+        if: steps.window.outputs.run == 'yes'
         run: echo "date=$(TZ=Asia/Tokyo date +%F)" >> "$GITHUB_OUTPUT"
 
       - name: すでに今日の下書きがあるか確認する
         id: guard
+        if: steps.window.outputs.run == 'yes'
         run: |
           # 定期実行のときだけ二重作成を防ぐ（retry や手動実行では作り直したい）
           if [ "${{ github.event_name }}" = "schedule" ] && [ -f "content/posts/${{ steps.today.outputs.date }}.json" ]; then
