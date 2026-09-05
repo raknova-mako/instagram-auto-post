@@ -1,0 +1,103 @@
+{
+  "category": "sheets",
+  "account": "@mako_raknova",
+  "topic": "空白行や重複データをまとめて消す",
+  "topicLine": 13,
+  "generatedAt": "2026-09-05T00:10:37.163Z",
+  "cover": {
+    "label": "スプレッドシート術",
+    "headline": "空白行や重複データで<mark>お悩みの方</mark>必見！",
+    "sub": "ポチポチ手作業で消していませんか？関数を1つ入れるだけで、一瞬で綺麗になります！"
+  },
+  "steps": [
+    {
+      "title": "手作業で消すのはやめよう！",
+      "body": "デコボコな空白や重複データも、この方法なら一瞬でキレイに整理できます！",
+      "sheet": {
+        "headers": [
+          "名前",
+          "部署"
+        ],
+        "rows": [
+          [
+            "佐藤",
+            "営業"
+          ],
+          [
+            "",
+            ""
+          ],
+          [
+            "鈴木",
+            "開発"
+          ],
+          [
+            "佐藤",
+            "営業"
+          ],
+          [
+            "",
+            ""
+          ],
+          [
+            "高橋",
+            "広報"
+          ]
+        ]
+      }
+    },
+    {
+      "title": "この数式をコピペするだけ！",
+      "body": "結果を表示させたいセルに、この通りに貼り付けてみてください！",
+      "formula": "=UNIQUE(FILTER(A2:B, A2:A<=\"\"))"
+    },
+    {
+      "title": "数式の意味を分解します！",
+      "body": "難しそうに見えますが、中身を分解すればすごくシンプルな仕組みです！",
+      "formula": "=UNIQUE(FILTER(A2:B, A2:A<=\"\"))"
+    },
+    {
+      "title": "一瞬で綺麗に整理完了！",
+      "body": "元の表にデータが増えても、勝手に最新の状態に更新してくれます！",
+      "sheet": {
+        "headers": [
+          "名前",
+          "部署"
+        ],
+        "rows": [
+          [
+            "*佐藤",
+            "*営業"
+          ],
+          [
+            "*鈴木",
+            "*開発"
+          ],
+          [
+            "*高橋",
+            "*広報"
+          ]
+        ]
+      }
+    }
+  ],
+  "outro": {
+    "lead": "手動の消去作業から今すぐ解放されましょう！",
+    "headline": "空白と重複は<mark>1行で消す！</mark>",
+    "bullets": [
+      "UNIQUEとFILTERを合体",
+      "範囲を開ければ自動で更新",
+      "手作業の消去は今日で卒業"
+    ],
+    "cta": "今すぐ保存してね！"
+  },
+  "caption": "コピペされたデータに空白行があったり、同じデータが何個も被っていて消すのが大変…という経験はありませんか？\n\n1行ずつ右クリックで削除していくのは、時間がかかる上に消し忘れの原因にもなります！\n\n実はこれ、関数を使えば一瞬で綺麗にまとめられます✨\n\n【使う数式はこちら】\n=UNIQUE(FILTER(A2:B, A2:A<>\"\"))\n\n【やり方】\n1. まとめたい元のデータ（例：A2からB列）を確認する\n2. 綺麗に出力したい別の場所に、上記の数式を入れるだけ！\n\n【数式のしくみ】\n・FILTER(A2:B, A2:A<>\"\") で、まず「A列が空っぽじゃない行」だけを抜き出します！\n・その結果を UNIQUE(...) で囲むことで、「被っているデータ」を1つにまとめます！\n\n【うまいこといかない時の原因】\n・「#VALUE!」が出る場合：範囲の指定がズレている可能性があります！A2:B と A2:A のスタート位置（2行目）が合っているか確認してみてください！\n・空白が消えない場合：見えないスペース（文字）が入っている可能性があります。その場合は元のデータの空白を削除してみてください！\n\n元の表に新しいデータが追加されても自動で反映されるので、もう手作業で削除する必要はありません！\n\n後から見返せるように、ぜひ「保存」して試してみてくださいね！✨\n\n#スプレッドシート #スプレッドシート便利術 #スプレッドシート初心者 #業務効率化 #仕事効率化 #時短術 #パソコン術 #デスクワーク #オフィスワーク #ノーコード #データ整理 #作業効率化",
+  "imageUrls": [
+    "https://raw.githubusercontent.com/raknova-mako/instagram-auto-post/main/published/2026-09-05/01.jpg",
+    "https://raw.githubusercontent.com/raknova-mako/instagram-auto-post/main/published/2026-09-05/02.jpg",
+    "https://raw.githubusercontent.com/raknova-mako/instagram-auto-post/main/published/2026-09-05/03.jpg",
+    "https://raw.githubusercontent.com/raknova-mako/instagram-auto-post/main/published/2026-09-05/04.jpg",
+    "https://raw.githubusercontent.com/raknova-mako/instagram-auto-post/main/published/2026-09-05/05.jpg",
+    "https://raw.githubusercontent.com/raknova-mako/instagram-auto-post/main/published/2026-09-05/06.jpg"
+  ]
+}
