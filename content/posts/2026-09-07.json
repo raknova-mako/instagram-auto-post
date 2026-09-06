@@ -1,0 +1,116 @@
+{
+  "category": "sheets",
+  "account": "@mako_raknova",
+  "topic": "日付から自動で「今月」だけ抜き出す",
+  "topicLine": 14,
+  "generatedAt": "2026-09-06T22:59:36.279Z",
+  "cover": {
+    "label": "スプレッドシート術",
+    "headline": "「今月分だけ」手作業で集めるの<mark>やめません？</mark>",
+    "sub": "日付が入った表から、今月のデータだけを自動で抜き出す魔法の1行！毎月のコピペ作業から解放されます！"
+  },
+  "steps": [
+    {
+      "title": "まずは元になる表を用意！",
+      "body": "日付が入ったデータを用意します！抽出先のセル（例えばE2）を選んでおきましょう！",
+      "sheet": {
+        "headers": [
+          "日付",
+          "担当",
+          "売上"
+        ],
+        "rows": [
+          [
+            "2024/04/01",
+            "佐藤",
+            "12,000"
+          ],
+          [
+            "2024/05/01",
+            "鈴木",
+            "15,000"
+          ],
+          [
+            "2024/05/15",
+            "高橋",
+            "18,000"
+          ]
+        ]
+      }
+    },
+    {
+      "title": "抽出先にこの1行を貼る！",
+      "body": "抽出したい場所の先頭セルに、以下の数式をそのままコピペして貼り付けます！",
+      "formula": "=FILTER(A2:C, TEXT(A2:A, \"yyyy-mm\") = TEXT(TODAY(), \"yyyy-mm\"))"
+    },
+    {
+      "title": "数式の中身を分解解説！",
+      "body": "呪文に見える数式も、細かく分ければすごく簡単！何をしているか見てみましょう！",
+      "explain": [
+        {
+          "part": "=FILTER(A2:C,",
+          "means": "A2からC列のデータを抜き出す"
+        },
+        {
+          "part": "TEXT(A2:A, \"yyyy-mm\")",
+          "means": "日付を「年-月」の形に変換"
+        },
+        {
+          "part": " = ",
+          "means": "右と左が同じ条件のものだけ抽出"
+        },
+        {
+          "part": "TEXT(TODAY(), \"yyyy-mm\")",
+          "means": "今日の「年-月」を作る"
+        }
+      ]
+    },
+    {
+      "title": "新データ追加で自動更新！",
+      "body": "元表に今月の日付で新しい行を追加すると、抽出結果にも自動で即座に反映されます！",
+      "sheet": {
+        "headers": [
+          "日付",
+          "担当",
+          "売上"
+        ],
+        "rows": [
+          [
+            "2024/05/01",
+            "鈴木",
+            "15,000"
+          ],
+          [
+            "2024/05/15",
+            "高橋",
+            "18,000"
+          ],
+          [
+            "*2024/05/20",
+            "佐藤",
+            "*22,000"
+          ]
+        ]
+      }
+    }
+  ],
+  "outro": {
+    "lead": "今日から手動コピペは卒業です！",
+    "headline": "自動化で時間を<mark>生み出そう</mark>",
+    "bullets": [
+      "FILTER関数で自動抽出",
+      "TEXTとTODAYで今月判定",
+      "データ追加で自動更新！"
+    ],
+    "cta": "今すぐ保存して試す！"
+  },
+  "caption": "毎月毎月、全体データから「今月分」だけを目で探してコピペしていませんか？💦 その作業、数式を1行入れるだけで完全に自動化できます！✨ 今回は開くだけで常に「今月」のデータだけを自動抽出するテクニックをご紹介します！【やり方】1. データが入っている表を用意（例：A列に日付、B列に担当、C列に売上） 2. 別エリアの先頭セル（例：E2セル）を選択 3. 以下の数式をそのまま貼り付け！ =FILTER(A2:C, TEXT(A2:A, \"yyyy-mm\") = TEXT(TODAY(), \"yyyy-mm\")) たったこれだけで、今月の日付がついた行だけがズラッと自動表示されます！来月になれば、自動的に「来月のデータ」に切り替わるので貼り直しも不要です！💡【うまく動かないとき】・#N/A と表示される：今月の日付データが元表に1件もない状態です！今月の日付を入力すれば解消します。 ・#REF! と表示される：抽出結果が表示される場所に、すでに文字や数字が入っていませんか？下のセルを空けておくと正しく表示されます！👍 ぜひ保存して、仕事のシートで使ってみてくださいね！✨\n\n#スプレッドシート #スプレッドシート便利機能 #業務効率化 #時短術 #仕事術 #FILTER関数 #エクセル初心者 #スプレッドシート初心者 #オフィスワーク #デスクワーク",
+  "imageUrls": [
+    "https://raw.githubusercontent.com/raknova-mako/instagram-auto-post/main/published/2026-09-07/01.jpg",
+    "https://raw.githubusercontent.com/raknova-mako/instagram-auto-post/main/published/2026-09-07/02.jpg",
+    "https://raw.githubusercontent.com/raknova-mako/instagram-auto-post/main/published/2026-09-07/03.jpg",
+    "https://raw.githubusercontent.com/raknova-mako/instagram-auto-post/main/published/2026-09-07/04.jpg",
+    "https://raw.githubusercontent.com/raknova-mako/instagram-auto-post/main/published/2026-09-07/05.jpg",
+    "https://raw.githubusercontent.com/raknova-mako/instagram-auto-post/main/published/2026-09-07/06.jpg"
+  ]
+}
