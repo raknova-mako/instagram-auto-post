@@ -11,6 +11,11 @@ permissions:
   contents: write
   issues: write
 
+# 同時に2つ動くと二重投稿になるため、必ず1つずつ実行する
+concurrency:
+  group: instagram-publish
+  cancel-in-progress: false
+
 jobs:
   publish:
     runs-on: ubuntu-latest
@@ -37,18 +42,34 @@ jobs:
         with:
           ref: main
 
-      - uses: actions/setup-node@v4
+      - name: 今日すでに投稿していないか確認する
+        id: daily
         if: steps.window.outputs.ok == 'yes'
+        run: |
+          today=$(TZ=Asia/Tokyo date +%F)
+          last=$(cat config/last-published.txt 2>/dev/null || echo "")
+          echo "today=$today" >> "$GITHUB_OUTPUT"
+          if [ "$last" = "$today" ]; then
+            echo "今日はすでに投稿済みです（$last）。1日1回までなので何もしません。"
+            echo "ok=no" >> "$GITHUB_OUTPUT"
+          else
+            echo "前回の投稿日: ${last:-なし}。今日はまだなので進みます。"
+            echo "ok=yes" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/setup-node@v4
+        if: steps.daily.outputs.ok == 'yes'
         with:
           node-version: "20"
 
       - name: 承認済みの下書きを探す
         id: find
-        if: steps.window.outputs.ok == 'yes'
+        if: steps.daily.outputs.ok == 'yes'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          number=$(gh issue list --label approved --state open --limit 1 --json number --jq '.[0].number')
+          # 承認待ちが複数たまっている場合は、古いものから順に出す
+          number=$(gh issue list --label approved --state open --limit 1 --json number --jq 'sort_by(.number) | .[0].number')
           if [ -z "$number" ] || [ "$number" = "null" ]; then
             echo "承認されたものがありません。今日は投稿しません。"
             echo "found=no" >> "$GITHUB_OUTPUT"
@@ -85,12 +106,15 @@ jobs:
           gh issue comment ${{ steps.find.outputs.number }} --body-file comment.md
           gh issue close ${{ steps.find.outputs.number }}
 
-      - name: ネタ帳に [済] を付ける
+      - name: 投稿した記録を残す
         if: steps.find.outputs.found == 'yes'
         run: |
+          echo "${{ steps.daily.outputs.today }}" > config/last-published.txt
           node scripts/mark-topic-done.mjs content/posts/${{ steps.find.outputs.date }}.json
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add content/topics.md
+          git add content/topics.md config/last-published.txt
           git diff --staged --quiet || git commit -m "投稿済み ${{ steps.find.outputs.date }}"
+          # 他の自動実行と競合しても失敗しないように、取り込んでから送る
+          git pull --rebase origin main
           git push

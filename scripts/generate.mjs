@@ -11,7 +11,19 @@ import { THEMES } from "./slides.mjs";
 const env = loadEnv();
 const account = env.IG_ACCOUNT_NAME || "@mako_raknova";
 
-const topic = nextTopic();
+/**
+ * ふだんはネタ帳の先頭から取るが、
+ * --topic "sheets|テーマ" と指定すればそのテーマで作れる（ネタ帳は消費しない）。
+ */
+const override = process.argv.indexOf("--topic");
+const topic =
+  override !== -1 && process.argv[override + 1]
+    ? (() => {
+        const [category, ...rest] = process.argv[override + 1].split("|");
+        return { category: category.trim(), theme: rest.join("|").trim(), lineIndex: null };
+      })()
+    : nextTopic();
+
 if (!topic) {
   console.error("❌ ネタ帳に未使用のネタがありません。content/topics.md に追加してください。");
   process.exit(1);
@@ -31,10 +43,16 @@ ${rules}
 
 【出力の決まり】
 
-- steps は3〜4個。うち1つは必ず「数式やコードの意味を、パーツごとに日本語で分解して説明する」ページにして、explain を埋めること。
-  数式やコードを一切使わないテーマの場合のみ、explain は省略してよい。
+- まず、このテーマが「型A：すぐ試せる型」と「型B：こんなことができる型」のどちらに合うかを決めること。
+  その型に合わせて steps を組み立て、各ページの badge を型の表に沿って付けること。
+- steps は3〜4個。
+- 数式やコードを見せる場合は、必ずその意味をパーツごとに日本語で分解するページ（explain）を入れること。
+  数式を一切使わないテーマでは explain は不要。
+- **タイトルと表紙に機能名を置かないこと。** 置くのは困りごとか、解決したあとの姿。
+  機能名は中面で「ちなみにこれは〇〇という機能です」と後から出す。
 - **すべての steps に、必ず図を1つ入れること。** formula か sheetHeaders+sheetRows か explain のいずれかを必ず埋める。
-  図を入れられない手順は、そもそも1ページ使う価値がないので、他の手順に統合するか削ること。
+  図を入れられないページは、そもそも1ページ使う価値がないので、他に統合するか削ること。
+- **型Bであっても、スプレッドシートの表を最低1枚は見せること。** 土台が身近なものだと伝えるため。
 - 数式やコードを見せるページには formula を入れる。
 - スプレッドシートの画面を見せたいページには sheetHeaders と sheetRows を入れる。
   sheetRows は1行を "4/1 | 佐藤 | 12,000" のように半角の縦棒で区切った文字列にすること。
@@ -43,7 +61,8 @@ ${rules}
   強調したいセルは "*17,600" のように先頭に半角アスタリスクを付ける。
 - headline や見出しの中で特に強調したい部分は <mark>ここ</mark> で囲む。囲むのは8文字以内。表紙とまとめに1か所ずつ。
 - caption にはハッシュタグを含めない。ハッシュタグは hashtags に分けて入れる。
-- caption は本文だけで手順を再現できる詳しさにし、絵文字を適度に使う。1800文字以内。
+- caption は、画像を見返さなくても内容が分かる詳しさにし、絵文字を適度に使う。1800文字以内。
+  最後は保存をうながす一言で締めること。
 - 文字数の上限を必ず守ること。上限を超えると画像からはみ出して読めなくなる。`;
 
 const schema = {
@@ -63,7 +82,11 @@ const schema = {
       items: {
         type: "OBJECT",
         properties: {
-          title: { type: "STRING", description: "手順の見出し。24文字以内" },
+          badge: {
+            type: "STRING",
+            description: "このページの見出しに付ける短い札。型Aなら STEP 1 / STEP 2 …、型Bなら よくある悩み / こう変わる / 仕組み / 始めるには。8文字以内",
+          },
+          title: { type: "STRING", description: "このページの見出し。24文字以内" },
           body: { type: "STRING", description: "手順の説明。70文字以内" },
           formula: { type: "STRING", description: "見せたい数式やコード。なければ空" },
           note: { type: "STRING", description: "図の下に添える一言。なければ空" },
@@ -139,6 +162,7 @@ const normalizeSheet = (headers, rawRows) => {
 /** AIの出力を、画像生成が使える形に整える */
 const steps = (draft.steps ?? []).map((s) => {
   const step = { title: s.title, body: s.body };
+  if (s.badge) step.badge = s.badge;
   if (s.formula) step.formula = s.formula;
   if (s.note) step.note = s.note;
   if (s.explain?.length) step.explain = s.explain;

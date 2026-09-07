@@ -103,6 +103,12 @@ body {
   font-size: 62px; font-weight: 900; line-height: 1.44;
   word-break: auto-phrase; line-break: strict;
 }
+/* 中面の見出しの強調。指定しないとブラウザ既定の黄色になってしまう */
+.step .title mark {
+  background: linear-gradient(transparent 58%, var(--marker) 58%);
+  color: inherit; padding: 0 4px; white-space: nowrap;
+}
+
 .step .body {
   margin-top: 32px;
   font-size: 36px; font-weight: 500; line-height: 1.85; color: var(--ink-soft);

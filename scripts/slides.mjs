@@ -115,7 +115,7 @@ export const stepHtml = (step, index, post, theme, total) => {
     hasVisual ? "step" : "step step--novisual",
     `<div class="topbar"></div>
      <div class="head">
-       <div class="stepno">STEP ${index}</div>
+       <div class="stepno">${esc(step.badge || `STEP ${index}`)}</div>
        <div class="cat">${esc(post.cover.label)}</div>
      </div>
      ${hasVisual ? text : `<div class="text-area">${text}</div>`}

@@ -25,7 +25,10 @@ export function nextTopic() {
 /** 投稿が終わったネタに [済] を付ける */
 export function markDone(lineIndex, note = "") {
   const lines = readFileSync(FILE, "utf8").split(/\r?\n/);
-  lines[lineIndex] = `[済] ${lines[lineIndex].trim()}${note ? `  ← ${note}` : ""}`;
+  const current = lines[lineIndex].trim();
+  // すでに印が付いている行に二重で付けない（付けると行が読み取れなくなる）
+  if (current.startsWith("[済]")) return;
+  lines[lineIndex] = `[済] ${current}${note ? `  ← ${note}` : ""}`;
   writeFileSync(FILE, lines.join("\n"), "utf8");
 }
 
