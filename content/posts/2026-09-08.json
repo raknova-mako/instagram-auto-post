@@ -1,0 +1,108 @@
+{
+  "category": "sheets",
+  "account": "@mako_raknova",
+  "topic": "「今月いくら？」と聞かれて3秒で答えられるようにする",
+  "topicLine": 20,
+  "generatedAt": "2026-09-07T22:54:58.767Z",
+  "cover": {
+    "label": "スプレッドシート術",
+    "headline": "「今月いくら？」に<mark>3秒で答える</mark>集計術",
+    "sub": "電卓を叩いて計算するのは今日で終わり！1行コピペするだけで、今月の合計金額が勝手に集計される仕組みを作れます！"
+  },
+  "steps": [
+    {
+      "title": "日々のデータ表を用意する",
+      "body": "日付と金額が並んだ一覧を用意します！日付の列と金額の列があれば準備OKです！",
+      "badge": "STEP 1",
+      "sheet": {
+        "headers": [
+          "日付",
+          "担当",
+          "売上金額"
+        ],
+        "rows": [
+          [
+            "2024/04/01",
+            "佐藤",
+            "12,000"
+          ],
+          [
+            "2024/04/05",
+            "田中",
+            "15,000"
+          ],
+          [
+            "2024/05/01",
+            "鈴木",
+            "20,000"
+          ]
+        ]
+      }
+    },
+    {
+      "title": "この数式を入れるだけ！",
+      "body": "集計したいセルに、この1行をそのまま貼り付けます！これで条件に合う金額だけが足されます！",
+      "badge": "STEP 2",
+      "formula": "=SUMIFS(C2:C, A2:A, \">=2024/04/01\", A2:A, \"<=2024/04/30\")"
+    },
+    {
+      "title": "数式の意味をサクッと分解！",
+      "body": "カッコの中を順番に見れば、仕組みは単純です！丸暗記しなくて大丈夫です！",
+      "badge": "STEP 3",
+      "explain": [
+        {
+          "part": "SUMIFS(",
+          "means": "条件に合う数字だけ足す"
+        },
+        {
+          "part": "C2:C,",
+          "means": "合計したい金額の列"
+        },
+        {
+          "part": "A2:A, \">=2024/04/01\",",
+          "means": "日付が4/1以降で"
+        },
+        {
+          "part": "A2:A, \"<=2024/04/30\"",
+          "means": "日付が4/30以前のもの"
+        }
+      ]
+    },
+    {
+      "title": "一瞬で計算完了！電卓ゼロへ",
+      "body": "新しいデータが増えても、自動で今月の合計に反映されます！集計の手間がゼロになります！",
+      "badge": "STEP 4",
+      "sheet": {
+        "headers": [
+          "集計期間",
+          "今月の売上合計"
+        ],
+        "rows": [
+          [
+            "2024年4月",
+            "*27,000"
+          ]
+        ]
+      }
+    }
+  ],
+  "outro": {
+    "lead": "今月の数字、すぐ答えられていますか？",
+    "headline": "<mark>1行の数式</mark>で集計を自動化！",
+    "bullets": [
+      "SUMIFSで特定月の合計を自動化",
+      "データ追加も自動反映でミスゼロ",
+      "ちなみにSUMIFSという機能です"
+    ],
+    "cta": "保存して今すぐ試す！"
+  },
+  "caption": "「今月の売上っていくらになってる？」そう聞かれて、慌ててスプレッドシートを開いて電卓を叩いたり、フィルターをかけ直したりしていませんか？💦 結論から言うと、SUMIFSという関数を1行入れておくだけで、「今月いくら？」に3秒で答えられるようになります！✨ データが増えても自動で計算されるので、集計作業自体がゼロになりますよ！ 【手順のおさらい】 ① 日付と金額の一覧を用意する（日付列と金額列を確認） ② 合計を出したいセルに数式をコピペ `=SUMIFS(C2:C, A2:A, \">=2024/04/01\", A2:A, \"<=2024/04/30\")` ③ カッコ内は「合計する列」「日付の範囲」「始点」「終点」の順！ 💡【つまずきポイント】日付列に「4月1日」のような文字が入っていると集計されません。「2024/04/01」の形で入力してください。範囲を C2:C と行数を限定しないことでデータ追加にも自動対応できます！ 後で見返せるように、ぜひ【保存】してお使いください！📌\n\n#スプレッドシート #スプレッドシート便利術 #業務効率化 #時短テク #バックオフィス #事務職 #経営者 #SUMIFS関数 #Excel初心者 #スプレッドシート初心者 #自動化 #仕事術 #仕事の効率化 #デスクワーク",
+  "imageUrls": [
+    "https://raw.githubusercontent.com/raknova-mako/instagram-auto-post/main/published/2026-09-08/01.jpg",
+    "https://raw.githubusercontent.com/raknova-mako/instagram-auto-post/main/published/2026-09-08/02.jpg",
+    "https://raw.githubusercontent.com/raknova-mako/instagram-auto-post/main/published/2026-09-08/03.jpg",
+    "https://raw.githubusercontent.com/raknova-mako/instagram-auto-post/main/published/2026-09-08/04.jpg",
+    "https://raw.githubusercontent.com/raknova-mako/instagram-auto-post/main/published/2026-09-08/05.jpg",
+    "https://raw.githubusercontent.com/raknova-mako/instagram-auto-post/main/published/2026-09-08/06.jpg"
+  ]
+}
