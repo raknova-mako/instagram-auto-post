@@ -1,0 +1,111 @@
+{
+  "category": "sheets",
+  "account": "@mako_raknova",
+  "topic": "「今月いくら？」と聞かれて3秒で答えられるようにする",
+  "topicLine": 20,
+  "generatedAt": "2026-09-08T22:48:31.341Z",
+  "cover": {
+    "label": "スプレッドシート術",
+    "headline": "「今月いくら？」に<mark>3秒で答える</mark>表の作り方",
+    "sub": "毎回電卓を叩いて集計していませんか？1行入れるだけで今月の売上がいつでも自動で分かります！"
+  },
+  "steps": [
+    {
+      "title": "まずは売上表を用意する",
+      "body": "日付、内容、金額が入った一覧表を用意します。日付の列と金額の列が分かれていれば準備完了です！",
+      "badge": "STEP 1",
+      "sheet": {
+        "headers": [
+          "日付",
+          "内容",
+          "金額"
+        ],
+        "rows": [
+          [
+            "2025/04/01",
+            "デザイン制作",
+            "150,000"
+          ],
+          [
+            "2025/04/05",
+            "サイト保守",
+            "30,000"
+          ],
+          [
+            "2025/04/12",
+            "記事執筆",
+            "20,000"
+          ]
+        ]
+      }
+    },
+    {
+      "title": "今月の合計を出す数式を入力",
+      "body": "集計したいセルにこの数式を入れるだけ！今日の日付から今月1日以降の金額を自動で計算してくれます！",
+      "badge": "STEP 2",
+      "formula": "=SUMIFS(C2:C, A2:A, \">=\"&DATE(YEAR(TODAY()),MONTH(TODAY()),1))",
+      "note": "※金額がC列、日付がA列の場合の数式です"
+    },
+    {
+      "title": "数式の中身をサクッと解説",
+      "body": "難しそうに見えますが、パーツの組み合わせです！仕組みが分かれば自分で応用もできるようになります！",
+      "badge": "STEP 3",
+      "explain": [
+        {
+          "part": "SUMIFS(C2:C, ...)",
+          "means": "条件に合うC列（金額）を足す"
+        },
+        {
+          "part": "A2:A, \">=\"&...",
+          "means": "A列（日付）が指定日以降"
+        },
+        {
+          "part": "DATE(YEAR(TODAY())...)",
+          "means": "今月1日の日付をつくる"
+        },
+        {
+          "part": "TODAY()",
+          "means": "今日の日付を自動取得する"
+        }
+      ]
+    },
+    {
+      "title": "これでいつでも一瞬で把握！",
+      "body": "データが増えても自動で今月分だけを集計！「今いくら？」と聞かれても画面を見るだけで即答できます！",
+      "badge": "STEP 4",
+      "sheet": {
+        "headers": [
+          "今月の合計売上",
+          "件数"
+        ],
+        "rows": [
+          [
+            "*200,000"
+          ],
+          [
+            "3件"
+          ]
+        ]
+      }
+    }
+  ],
+  "outro": {
+    "lead": "集計の手間をゼロにする振り返り",
+    "headline": "<mark>今月の集計</mark>は数式におまかせ！",
+    "bullets": [
+      "SUMIFSで条件集計する",
+      "TODAYで今月を自動判定",
+      "電卓を叩く手間が消える"
+    ],
+    "cta": "保存して試す！"
+  },
+  "caption": "「今月の売上、いまいくら？」と聞かれたとき、焦って電卓を叩いたり手作業で絞り込んでいませんか？ スプレッドシートに1つ数式を入れておくだけで、いつでも自動で今月の合計金額を計算してくれるようになります！ ▼使う数式はこちら =SUMIFS(C2:C, A2:A, \">=\"&DATE(YEAR(TODAY()),MONTH(TODAY()),1)) ※金額がC列、日付がA列の場合です。 ■ポイント 1. TODAYで今日の日付を自動取得 2. DATEで今月1日の日付を作成 3. SUMIFSで今月1日以降の金額だけを自動集計！ 月が変われば自動的に新しい月の集計に切り替わるので、毎月数式を書き直す手間も一切ありません！ちなみにこれは「SUMIFS関数」という機能を使っています。ぜひ保存して、ご自身の売上表や経費表で試してみてくださいね！\n\n#スプレッドシートバカ便利術 #スプレッドシート #業務効率化 #仕事効率化 #時短テク #バックオフィス #事務処理 #経理事務 #売上管理 #データ集計",
+  "imageUrls": [
+    "https://raw.githubusercontent.com/raknova-mako/instagram-auto-post/main/published/2026-09-09/01.jpg",
+    "https://raw.githubusercontent.com/raknova-mako/instagram-auto-post/main/published/2026-09-09/02.jpg",
+    "https://raw.githubusercontent.com/raknova-mako/instagram-auto-post/main/published/2026-09-09/03.jpg",
+    "https://raw.githubusercontent.com/raknova-mako/instagram-auto-post/main/published/2026-09-09/04.jpg",
+    "https://raw.githubusercontent.com/raknova-mako/instagram-auto-post/main/published/2026-09-09/05.jpg",
+    "https://raw.githubusercontent.com/raknova-mako/instagram-auto-post/main/published/2026-09-09/06.jpg"
+  ]
+}
