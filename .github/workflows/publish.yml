@@ -68,8 +68,9 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          # 承認待ちが複数たまっている場合は、古いものから順に出す
-          number=$(gh issue list --label approved --state open --limit 1 --json number --jq 'sort_by(.number) | .[0].number')
+          # 承認待ちが複数たまっている場合は、古いものから順に出す。
+          # ここで --limit 1 にすると新しい1件しか取れず、古い順に出せなくなる。
+          number=$(gh issue list --label approved --state open --limit 50 --json number --jq 'sort_by(.number) | .[0].number')
           if [ -z "$number" ] || [ "$number" = "null" ]; then
             echo "承認されたものがありません。今日は投稿しません。"
             echo "found=no" >> "$GITHUB_OUTPUT"
