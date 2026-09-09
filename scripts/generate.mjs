@@ -2,7 +2,7 @@
  * ネタ帳から1件取り出し、執筆ルールに従ってAIに投稿一式を書かせる。
  * 出力: content/posts/<日付>.json（画像用データ＋キャプション）
  */
-import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
+import { readFileSync, writeFileSync, mkdirSync, existsSync, readdirSync } from "node:fs";
 import { loadEnv } from "./env.mjs";
 import { generateJson } from "./gemini.mjs";
 import { nextTopic } from "./topics.mjs";
@@ -11,21 +11,41 @@ import { THEMES } from "./slides.mjs";
 const env = loadEnv();
 const account = env.IG_ACCOUNT_NAME || "@mako_raknova";
 
-/**
- * ふだんはネタ帳の先頭から取るが、
- * --topic "sheets|テーマ" と指定すればそのテーマで作れる（ネタ帳は消費しない）。
- */
+// 日本時間の日付。ファイル名にも使う
+const date = new Date().toLocaleDateString("sv-SE", { timeZone: "Asia/Tokyo" });
+const todayFile = `content/posts/${date}.json`;
+
+/** すでに下書きを作ったネタの行番号を集める（同じネタを何日も使わないため） */
+const draftedLines = new Set();
+if (existsSync("content/posts")) {
+  for (const file of readdirSync("content/posts").filter((f) => f.endsWith(".json"))) {
+    try {
+      const p = JSON.parse(readFileSync(`content/posts/${file}`, "utf8"));
+      if (typeof p.topicLine === "number") draftedLines.add(p.topicLine);
+    } catch {
+      // 読めないファイルは無視する
+    }
+  }
+}
+
+/** --topic "sheets|テーマ" と指定すれば、そのテーマで作れる（ネタ帳は消費しない） */
 const override = process.argv.indexOf("--topic");
-const topic =
-  override !== -1 && process.argv[override + 1]
-    ? (() => {
-        const [category, ...rest] = process.argv[override + 1].split("|");
-        return { category: category.trim(), theme: rest.join("|").trim(), lineIndex: null };
-      })()
-    : nextTopic();
+const overrideValue = override !== -1 ? process.argv[override + 1] : null;
+
+let topic = null;
+
+if (overrideValue) {
+  const [category, ...rest] = overrideValue.split("|");
+  topic = { category: category.trim(), theme: rest.join("|").trim(), lineIndex: null };
+}
+
+// 作り直し（retry）のときも、ここで別のネタが選ばれる。
+// 今日の下書きが使っていたネタは draftedLines に入っているため、同じものは選ばれない。
+topic ??= nextTopic(draftedLines);
 
 if (!topic) {
-  console.error("❌ ネタ帳に未使用のネタがありません。content/topics.md に追加してください。");
+  console.error("❌ 使えるネタがありません。すべてのネタで下書きを作り終えています。");
+  console.error("   content/topics.md に新しいネタを追加してください。");
   process.exit(1);
 }
 
@@ -186,9 +206,7 @@ const post = {
     .join(" ")}`,
 };
 
-// 日本時間の日付でファイル名を付ける（UTCだと前日になってしまう）
-const date = new Date().toLocaleDateString("sv-SE", { timeZone: "Asia/Tokyo" });
-const outFile = `content/posts/${date}.json`;
+const outFile = todayFile;
 mkdirSync("content/posts", { recursive: true });
 writeFileSync(outFile, JSON.stringify(post, null, 2), "utf8");
 

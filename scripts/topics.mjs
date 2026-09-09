@@ -3,14 +3,19 @@ import { readFileSync, writeFileSync } from "node:fs";
 const FILE = "content/topics.md";
 const CATEGORIES = ["sheets", "appsheet", "google"];
 
-/** ネタ帳から、まだ使っていない一番上のネタを取り出す */
-export function nextTopic() {
+/**
+ * ネタ帳から、まだ使っていない一番上のネタを取り出す。
+ * exclude には「すでに下書きが作られた行番号」を渡す。
+ * 投稿されるまで [済] が付かないため、これがないと同じネタが何日も選ばれてしまう。
+ */
+export function nextTopic(exclude = new Set()) {
   const lines = readFileSync(FILE, "utf8").split(/\r?\n/);
 
   for (const [i, line] of lines.entries()) {
     const t = line.trim();
     if (!t || t.startsWith("#") || t.startsWith("-") || t.startsWith("[済]")) continue;
     if (!t.includes("|")) continue;
+    if (exclude.has(i)) continue;
 
     const [rawCat, ...rest] = t.split("|");
     const category = rawCat.trim();
