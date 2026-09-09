@@ -15,13 +15,21 @@ const account = env.IG_ACCOUNT_NAME || "@mako_raknova";
 const date = new Date().toLocaleDateString("sv-SE", { timeZone: "Asia/Tokyo" });
 const todayFile = `content/posts/${date}.json`;
 
-/** すでに下書きを作ったネタの行番号を集める（同じネタを何日も使わないため） */
-const draftedLines = new Set();
+/**
+ * これまでの下書きを調べる。
+ * ・同じネタを何日も使わないため、使用済みの行番号を集める
+ * ・スプレッドシートとAppSheetが偏らないよう、直前のカテゴリを覚えておく
+ */
+const draftedTopics = new Set();
+let lastCategory = null;
+
 if (existsSync("content/posts")) {
-  for (const file of readdirSync("content/posts").filter((f) => f.endsWith(".json"))) {
+  const files = readdirSync("content/posts").filter((f) => f.endsWith(".json")).sort();
+  for (const file of files) {
     try {
       const p = JSON.parse(readFileSync(`content/posts/${file}`, "utf8"));
-      if (typeof p.topicLine === "number") draftedLines.add(p.topicLine);
+      if (p.category && p.topic) draftedTopics.add(`${p.category}|${p.topic}`);
+      if (p.category) lastCategory = p.category; // ファイル名は日付順なので最後が直近
     } catch {
       // 読めないファイルは無視する
     }
@@ -40,8 +48,18 @@ if (overrideValue) {
 }
 
 // 作り直し（retry）のときも、ここで別のネタが選ばれる。
-// 今日の下書きが使っていたネタは draftedLines に入っているため、同じものは選ばれない。
-topic ??= nextTopic(draftedLines);
+// 今日の下書きが使っていたネタは draftedTopics に入っているため、同じものは選ばれない。
+//
+// スプレッドシートばかりが続かないよう、直前がスプレッドシートなら次はそれ以外、
+// 直前がそれ以外なら次はスプレッドシート、と交互に選ぶ。
+if (!topic) {
+  const wantSheets = lastCategory !== null && lastCategory !== "sheets";
+  const preferred = nextTopic(draftedTopics, (c) =>
+    wantSheets ? c === "sheets" : c !== "sheets"
+  );
+  // 希望のカテゴリに空きがなければ、こだわらずに次のネタを使う
+  topic = preferred ?? nextTopic(draftedTopics);
+}
 
 if (!topic) {
   console.error("❌ 使えるネタがありません。すべてのネタで下書きを作り終えています。");

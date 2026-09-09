@@ -5,36 +5,51 @@ const CATEGORIES = ["sheets", "appsheet", "google"];
 
 /**
  * ネタ帳から、まだ使っていない一番上のネタを取り出す。
- * exclude には「すでに下書きが作られた行番号」を渡す。
- * 投稿されるまで [済] が付かないため、これがないと同じネタが何日も選ばれてしまう。
+ * exclude には「すでに下書きが作られたネタ」を "カテゴリ|テーマ" の形で渡す。
+ * 行番号ではなく文言で照合するので、ネタ帳を並べ替えてもズレない。
  */
-export function nextTopic(exclude = new Set()) {
+export function nextTopic(exclude = new Set(), accept = () => true) {
   const lines = readFileSync(FILE, "utf8").split(/\r?\n/);
 
   for (const [i, line] of lines.entries()) {
     const t = line.trim();
     if (!t || t.startsWith("#") || t.startsWith("-") || t.startsWith("[済]")) continue;
     if (!t.includes("|")) continue;
-    if (exclude.has(i)) continue;
 
     const [rawCat, ...rest] = t.split("|");
     const category = rawCat.trim();
     const theme = rest.join("|").trim();
     if (!CATEGORIES.includes(category) || !theme) continue;
+    if (exclude.has(`${category}|${theme}`)) continue;
+    if (!accept(category)) continue;
 
     return { category, theme, lineIndex: i };
   }
   return null;
 }
 
-/** 投稿が終わったネタに [済] を付ける */
-export function markDone(lineIndex, note = "") {
-  const lines = readFileSync(FILE, "utf8").split(/\r?\n/);
-  const current = lines[lineIndex].trim();
-  // すでに印が付いている行に二重で付けない（付けると行が読み取れなくなる）
-  if (current.startsWith("[済]")) return;
-  lines[lineIndex] = `[済] ${current}${note ? `  ← ${note}` : ""}`;
-  writeFileSync(FILE, lines.join("\n"), "utf8");
+/**
+ * 投稿が終わったネタに [済] を付ける。
+ * 行番号ではなくテーマの文言で探すので、ネタ帳を並べ替えても正しい行に付く。
+ */
+export function markDone(category, theme, note = "") {
+  const nl = String.fromCharCode(10);
+  const lines = readFileSync(FILE, "utf8").split(nl);
+
+  for (let i = 0; i < lines.length; i++) {
+    const t = lines[i].trim().replace(String.fromCharCode(13), "");
+    if (!t || t.startsWith("#") || t.startsWith("-") || t.startsWith("[済]")) continue;
+    if (!t.includes("|")) continue;
+
+    const [rawCat, ...rest] = t.split("|");
+    if (rawCat.trim() !== category) continue;
+    if (rest.join("|").trim() !== theme) continue;
+
+    lines[i] = `[済] ${t}${note ? `  ← ${note}` : ""}`;
+    writeFileSync(FILE, lines.join(nl), "utf8");
+    return true;
+  }
+  return false;
 }
 
 /** ネタ帳の全件を返す（使用済みかどうかも一緒に） */
