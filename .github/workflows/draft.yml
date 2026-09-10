@@ -157,8 +157,17 @@ jobs:
           echo "原因の詳細はこちら:" >> fail.md
           echo "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> fail.md
           echo "" >> fail.md
-          echo "AIの混雑や通信の不調が原因のことが多く、もう一度実行すれば作れることがほとんどです。" >> fail.md
-          echo "Actions画面の「下書きを作る」から Run workflow を押してください。" >> fail.md
+          echo "AIの混雑や通信の不調が原因のことが多く、次の定期実行で作れることがほとんどです。" >> fail.md
+          echo "" >> fail.md
+
+          # AIから実際に返ってきた内容を載せる。原因の切り分けに使う
+          if [ -f gemini-errors.txt ]; then
+            echo "AIから返ってきた内容:" >> fail.md
+            echo '```' >> fail.md
+            cat gemini-errors.txt >> fail.md
+            echo '```' >> fail.md
+            echo "" >> fail.md
+          fi
 
           # 同じ通知がすでに開いていれば、増やさずにコメントを足すだけにする
           gh label create 失敗 --color D93F0B --description "自動処理が失敗した" --force

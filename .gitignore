@@ -8,3 +8,6 @@ out/
 
 # 画像を作るときの一時ファイル
 .render.html
+
+# AIのエラー記録（実行のたびに作られる）
+gemini-errors.txt

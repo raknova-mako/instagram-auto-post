@@ -2,6 +2,7 @@
  * Geminiに「決まった形のJSON」を書かせる共通部品。
  * 混雑（503）が頻発するため、複数モデル・複数回・複数周のリトライを内蔵する。
  */
+import { writeFileSync } from "node:fs";
 import { loadEnv, requireValue } from "./env.mjs";
 
 const sleep = (sec) => new Promise((r) => setTimeout(r, sec * 1000));
@@ -45,54 +46,62 @@ export async function generateJson({ prompt, schema, label = "原稿" }) {
 
   let text = "";
   let usedModel = "";
+  // 失敗したときに原因が分かるよう、やりとりの結果を記録しておく
+  const attemptLog = [];
 
-  // 全モデルが混んでいても、少し待って周回し直す（混雑は数分で解けることが多い）
-  outer: for (let round = 1; round <= 3 && !text; round++) {
-    if (round > 1) {
-      console.log(`   全モデルが混雑中。90秒待って${round}周目に入ります`);
-      await sleep(90);
-    }
+  // ここで粘りすぎると1回の実行が10分以上かかる。
+  // 早めに諦めても、次の定期実行が作り直してくれるので、短く切り上げる。
+  outer: for (const name of candidates) {
+    for (let attempt = 1; attempt <= 2; attempt++) {
+      const { ok, status, body } = await ask(name);
 
-    for (const name of candidates) {
-      for (let attempt = 1; attempt <= 2; attempt++) {
-        const { ok, status, body } = await ask(name);
-
-        if (ok) {
-          text = body?.candidates?.[0]?.content?.parts?.map((p) => p.text).join("") ?? "";
-          if (text) {
-            usedModel = name;
-            break outer;
-          }
-          console.log(`   ${name}: 空の返事（理由: ${body?.candidates?.[0]?.finishReason ?? "不明"}）`);
-          continue;
+      if (ok) {
+        text = body?.candidates?.[0]?.content?.parts?.map((p) => p.text).join("") ?? "";
+        if (text) {
+          usedModel = name;
+          break outer;
         }
+        const why = body?.candidates?.[0]?.finishReason ?? "不明";
+        attemptLog.push(`${name}: 空の返事（理由: ${why}）`);
+        console.log(`   ${name}: 空の返事（理由: ${why}）`);
+        continue;
+      }
 
-        const message = body?.error?.message ?? "";
+      const message = body?.error?.message ?? "";
 
-        // 無料枠の使い切りは、待っても今日は回復しない。すぐ次のモデルへ移る
-        if (status === 429 && /quota/i.test(message)) {
-          console.log(`   ${name}: 今日の無料枠を使い切っています。次のモデルを試します`);
-          break;
-        }
-
-        // 混雑や一時的な回数制限は、待てば直る可能性がある
-        if (status === 429 || status >= 500) {
-          const wait = attempt * 10;
-          console.log(`   ${name}: 混雑中(${status})。${wait}秒待って再挑戦（${attempt}/2）`);
-          await sleep(wait);
-          continue;
-        }
-
-        // 設定ミスなどは待っても直らないので、次のモデルへ
-        console.error(`   ${name}: エラー (HTTP ${status}) ${message}`);
+      // 無料枠の使い切りは、待っても今日は回復しない。すぐ次のモデルへ移る
+      if (status === 429 && /quota/i.test(message)) {
+        attemptLog.push(`${name}: HTTP 429 無料枠切れ — ${message}`);
+        console.log(`   ${name}: 今日の無料枠を使い切っています。次のモデルを試します`);
         break;
       }
+
+      // 混雑や一時的な回数制限は、待てば直る可能性がある
+      if (status === 429 || status >= 500) {
+        const wait = attempt * 5;
+        attemptLog.push(`${name}: HTTP ${status} — ${message || "(本文なし)"}`);
+        console.log(`   ${name}: 混雑中(${status})。${wait}秒待って再挑戦（${attempt}/2）`);
+        await sleep(wait);
+        continue;
+      }
+
+      // 設定ミスなどは待っても直らないので、次のモデルへ
+      attemptLog.push(`${name}: HTTP ${status} — ${message || "(本文なし)"}`);
+      console.error(`   ${name}: エラー (HTTP ${status}) ${message}`);
+      break;
     }
   }
 
   if (!text) {
-    console.error(`❌ すべてのモデルが混雑していて、${label}を作れませんでした。`);
-    console.error("   時間をおいて実行し直してください。");
+    // あとから原因を追えるよう、実際に返ってきた内容をファイルに残す
+    const report = attemptLog.length ? attemptLog.join(String.fromCharCode(10)) : "記録がありません";
+    try {
+      writeFileSync("gemini-errors.txt", report, "utf8");
+    } catch {
+      // 書けなくても本題ではないので進める
+    }
+    console.error(`❌ どのモデルでも${label}を作れませんでした。返ってきた内容:`);
+    console.error(report);
     process.exit(1);
   }
 
