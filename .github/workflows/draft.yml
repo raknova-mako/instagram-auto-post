@@ -43,15 +43,27 @@ jobs:
         if: steps.window.outputs.run == 'yes'
         run: echo "date=$(TZ=Asia/Tokyo date +%F)" >> "$GITHUB_OUTPUT"
 
-      - name: すでに今日の下書きがあるか確認する
+      - name: すでに今日の承認待ちがあるか確認する
         id: guard
         if: steps.window.outputs.run == 'yes'
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
-          # 定期実行のときだけ二重作成を防ぐ（retry や手動実行では作り直したい）
-          if [ "${{ github.event_name }}" = "schedule" ] && [ -f "content/posts/${{ steps.today.outputs.date }}.json" ]; then
-            echo "今日の下書きはすでに作成済みです。何もしません。"
+          # 作り直し(retry)や手動実行では、必ず作り直す
+          if [ "${{ github.event_name }}" != "schedule" ]; then
+            echo "skip=no" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          # 判断はファイルの有無ではなく「今日の承認待ちIssueがあるか」で行う。
+          # こうしておくと、下書きに失敗した日やIssueを閉じた日に、
+          # 次の定期実行がひとりで作り直してくれる。
+          count=$(gh issue list --state open --search "${{ steps.today.outputs.date }} in:title" --json number --jq 'length')
+          if [ "$count" != "0" ]; then
+            echo "今日の承認待ちがすでにあります。何もしません。"
             echo "skip=yes" >> "$GITHUB_OUTPUT"
           else
+            echo "今日の承認待ちがないので、下書きを作ります。"
             echo "skip=no" >> "$GITHUB_OUTPUT"
           fi
 

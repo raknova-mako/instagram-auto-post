@@ -12,12 +12,15 @@ export async function generateJson({ prompt, schema, label = "原稿" }) {
 
   // 3.7-flash は混雑が慢性化しているため既定では後回しにする
   const preferred = env.GEMINI_MODEL || "gemini-3.6-flash";
+  // 上から順に試す。gemini-2.5-flash は廃止済みなので入れない
   const candidates = [...new Set([
     preferred,
     "gemini-3.7-flash",
     "gemini-3.5-flash",
+    "gemini-3.5-flash-lite",
+    "gemini-3.8-flash",
     "gemini-flash-latest",
-    "gemini-2.5-flash",
+    "gemini-pro-latest",
   ])];
 
   const ask = async (name) => {
@@ -64,7 +67,15 @@ export async function generateJson({ prompt, schema, label = "原稿" }) {
           continue;
         }
 
-        // 混雑・回数制限は待てば直る可能性がある
+        const message = body?.error?.message ?? "";
+
+        // 無料枠の使い切りは、待っても今日は回復しない。すぐ次のモデルへ移る
+        if (status === 429 && /quota/i.test(message)) {
+          console.log(`   ${name}: 今日の無料枠を使い切っています。次のモデルを試します`);
+          break;
+        }
+
+        // 混雑や一時的な回数制限は、待てば直る可能性がある
         if (status === 429 || status >= 500) {
           const wait = attempt * 10;
           console.log(`   ${name}: 混雑中(${status})。${wait}秒待って再挑戦（${attempt}/2）`);
@@ -73,7 +84,7 @@ export async function generateJson({ prompt, schema, label = "原稿" }) {
         }
 
         // 設定ミスなどは待っても直らないので、次のモデルへ
-        console.error(`   ${name}: エラー (HTTP ${status}) ${body?.error?.message ?? ""}`);
+        console.error(`   ${name}: エラー (HTTP ${status}) ${message}`);
         break;
       }
     }
