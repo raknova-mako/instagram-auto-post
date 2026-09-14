@@ -1,0 +1,121 @@
+{
+  "category": "sheets",
+  "account": "@mako_raknova",
+  "topic": "名簿の重複や打ち間違いを、目でさがすのをやめる",
+  "topicLine": 23,
+  "generatedAt": "2026-09-14T22:10:53.789Z",
+  "cover": {
+    "label": "スプレッドシート",
+    "headline": "名簿の重複を <mark>目で探す</mark> のはもうやめよう！",
+    "sub": "重複登録や入力ミスをスプレッドシートが自動で教えてくれます！目視のチェック作業から解放されましょう！"
+  },
+  "steps": [
+    {
+      "title": "チェックしたい <mark>列全体</mark> を選ぶ",
+      "body": "まずは重複を確かめたい列（例：A列）を丸ごと選択します！列のアルファベットを押せばOKです！",
+      "badge": "STEP 1",
+      "sheet": {
+        "headers": [
+          "顧客ID",
+          "氏名",
+          "メールアドレス"
+        ],
+        "rows": [
+          [
+            "1001",
+            "田中 太郎",
+            "tanaka@example.com"
+          ],
+          [
+            "1002",
+            "鈴木 一郎",
+            "suzuki@example.com"
+          ],
+          [
+            "1001",
+            "田中 太郎",
+            "tanaka@example.com"
+          ]
+        ]
+      }
+    },
+    {
+      "title": "条件付き書式に <mark>数式を入れる</mark>",
+      "body": "「表示形式」→「条件付き書式」を開き、「カスタム数式」にこの数式を貼り付けます！",
+      "badge": "STEP 2",
+      "formula": "=COUNTIF(A:A, A1)>1",
+      "note": "※A列の中で同じデータが2つ以上あると自動で色がつく設定です"
+    },
+    {
+      "title": "数式の意味は <mark>とてもシンプル</mark>",
+      "body": "難しそうに見える数式も、分解してみると実はすごく単純な仕組みなんです！",
+      "badge": "STEP 3",
+      "explain": [
+        {
+          "part": "=COUNTIF(",
+          "means": "個数をかぞえてね"
+        },
+        {
+          "part": "A:A,",
+          "means": "A列全体の中で"
+        },
+        {
+          "part": "A1)",
+          "means": "A1と同じ内容のものを"
+        },
+        {
+          "part": ">1",
+          "means": "1より多い（2個以上）なら色をつける"
+        }
+      ]
+    },
+    {
+      "title": "ダブった瞬間に <mark>自動で赤くなる</mark>",
+      "body": "これで二重登録や入力ミスは一目瞭然！何百行あっても目で探す必要はもうありません！",
+      "badge": "STEP 4",
+      "sheet": {
+        "headers": [
+          "顧客ID",
+          "氏名",
+          "判定"
+        ],
+        "rows": [
+          [
+            "1001",
+            "山田 太郎",
+            "正常"
+          ],
+          [
+            "*1001",
+            "*山田 太郎",
+            "*重複！"
+          ],
+          [
+            "1002",
+            "佐藤 花子",
+            "正常"
+          ]
+        ]
+      }
+    }
+  ],
+  "outro": {
+    "lead": "今日のまとめ",
+    "headline": "名簿チェックは <mark>仕組みに任せる</mark>",
+    "bullets": [
+      "列全体を選んで条件付き書式",
+      "COUNTIF関数でダブりを判定",
+      "2個以上なら自動で色が変わる"
+    ],
+    "cta": "今すぐ保存して試す"
+  },
+  "caption": "名簿や顧客リストで「この人、前にも登録したっけ…？」と上から順に目で探していませんか？👀\n\n何百行もあるシートを目で確認するのは時間がかかるし、どうしても見落としが起きてしまいますよね💦\n\n結論から言うと、スプレッドシートの「条件付き書式」を使えば、重複した瞬間に自動でセルに色をつけられます！✨\n\n手順はとっても簡単です！\n\n1. 重複をチェックしたい列（A列など）を選択\n2. メニューの「表示形式」→「条件付き書式」を開く\n3. 書式ルールを「カスタム数式」に変更\n4. `=COUNTIF(A:A, A1)>1` と入力して完了！\n\nこれで、すでにリストにある名前やIDを入力した瞬間、勝手にセルが赤く光って教えてくれます！判別する時間をゼロにできますよ👍\n\n⚠️ つまずきやすいポイント\n数式内の `A:A` はチェックしたい列、`A1` はその列の1行目のセルを指定してください。B列をチェックしたい場合は `=COUNTIF(B:B, B1)>1` に変更すればOKです！\n\n「あとで自分のシートでも設定しよう！」と思った方は、ぜひ保存して試してみてくださいね🔖\n\n#スプレッドシート #スプレッドシート便利術 #業務効率化 #仕事効率化 #時短術 #デスクワーク #事務職 #バックオフィス #データ入力 #条件付き書式 #COUNTIF関数 #Excel術 #ラクノバ",
+  "imageUrls": [
+    "https://raw.githubusercontent.com/raknova-mako/instagram-auto-post/main/published/2026-09-15/01.jpg",
+    "https://raw.githubusercontent.com/raknova-mako/instagram-auto-post/main/published/2026-09-15/02.jpg",
+    "https://raw.githubusercontent.com/raknova-mako/instagram-auto-post/main/published/2026-09-15/03.jpg",
+    "https://raw.githubusercontent.com/raknova-mako/instagram-auto-post/main/published/2026-09-15/04.jpg",
+    "https://raw.githubusercontent.com/raknova-mako/instagram-auto-post/main/published/2026-09-15/05.jpg",
+    "https://raw.githubusercontent.com/raknova-mako/instagram-auto-post/main/published/2026-09-15/06.jpg"
+  ]
+}
