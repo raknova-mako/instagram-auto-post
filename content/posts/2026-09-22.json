@@ -1,0 +1,120 @@
+{
+  "category": "google",
+  "account": "@mako_raknova",
+  "topic": "お客様に送ったアンケートの答えが、そのまま顧客名簿になる",
+  "topicLine": 36,
+  "generatedAt": "2026-09-21T23:24:52.108Z",
+  "cover": {
+    "label": "Googleの便利機能",
+    "headline": "アンケートを書いてもらうと<mark>顧客名簿が完成</mark>する",
+    "sub": "お客様に入力してもらった回答を手作業で移していませんか？送信ボタンが押された瞬間に、自動で名簿へ追加される仕組みを作りましょう！"
+  },
+  "steps": [
+    {
+      "title": "アンケートを作成する",
+      "body": "まずは回答を集めるフォームを用意します！お名前や連絡先など、名簿に必要な項目をセットしておきましょう！",
+      "badge": "STEP 1",
+      "sheet": {
+        "headers": [
+          "項目名",
+          "入力形式",
+          "必須"
+        ],
+        "rows": [
+          [
+            "お名前",
+            "記述式",
+            "*必須"
+          ],
+          [
+            "電話番号",
+            "記述式",
+            "*必須"
+          ],
+          [
+            "ご来店日",
+            "日付",
+            "任意"
+          ]
+        ]
+      }
+    },
+    {
+      "title": "回答の送信先を指定する",
+      "body": "フォームの緑色アイコンを押すだけで、届いた回答がリアルタイムでスプレッドシートへ流れるようになります！",
+      "badge": "STEP 2",
+      "sheet": {
+        "headers": [
+          "タイムスタンプ",
+          "お名前",
+          "電話番号"
+        ],
+        "rows": [
+          [
+            "2024/04/01 10:00",
+            "山田太郎",
+            "090-1234-5678"
+          ],
+          [
+            "2024/04/01 11:30",
+            "鈴木花子",
+            "090-8765-4321"
+          ]
+        ]
+      }
+    },
+    {
+      "title": "数式で自動整理する",
+      "body": "回答シートから必要な項目だけを抽出し、顧客名簿シートへ自動でキレイに並べ替える数式を入れます！",
+      "badge": "STEP 3",
+      "formula": "=FILTER('フォームの回答 1'!B2:C, 'フォームの回答 1'!B2:B< me>\"\")",
+      "note": "ちなみにこれはFILTER関数という機能です！"
+    },
+    {
+      "title": "手入力ゼロで名簿が完成！",
+      "body": "お客様が送信した瞬間に顧客名簿へ追加されます！転記の手間も打ち間違いのミスもすべてなくなります！",
+      "badge": "STEP 4",
+      "sheet": {
+        "headers": [
+          "顧客No",
+          "お名前",
+          "電話番号",
+          "登録状況"
+        ],
+        "rows": [
+          [
+            "C001",
+            "山田太郎",
+            "090-1234-5678",
+            "*自動連携"
+          ],
+          [
+            "C002",
+            "鈴木花子",
+            "090-8765-4321",
+            "*自動連携"
+          ]
+        ]
+      }
+    }
+  ],
+  "outro": {
+    "lead": "手入力の転記作業とは今日でお別れ！",
+    "headline": "回答がそのまま<mark>自動で名簿に</mark>変わる！",
+    "bullets": [
+      "Googleフォームで作成",
+      "スプレッドシートへ自動送信",
+      "数式で必要な部分だけ整理"
+    ],
+    "cta": "保存して試す！"
+  },
+  "caption": "「紙のアンケートをパソコンに入力し直している…」\n「お客様が書いた内容を手作業で名簿に移すのが大変…」\n\nそんなお悩みはありませんか？\n\n実は、Googleフォームとスプレッドシートを連携させるだけで、お客様が回答を送信した瞬間に自動で顧客名簿が完成する仕組みが作れます！\n\n手作業での転記が必要なくなれば、転記ミスや入力漏れもゼロに！\n浮いた時間で、お客様へのフォローや本業に集中できるようになります✨\n\n【今回のポイント】\n1. Googleフォームでアンケートを作成\n2. 回答の送信先にスプレッドシートを指定\n3. FILTER関数を使って必要なデータだけ名簿シートに自動反映\n\n一度設定しておけば、あとは完全自動で動きます！\n業務効率化の第一歩として、ぜひ試してみてくださいね😊\n\n後で見返せるように、右下のマークから保存しておきましょう！\n\n#スプレッドシート #スプレッドシート活用 #Googleフォーム #業務効率化 #業務改善 #時短術 #顧客管理 #顧客名簿 #自動化 #店舗管理 #事務作業 #バックオフィス #データ入力 #ラクノバ",
+  "imageUrls": [
+    "https://raw.githubusercontent.com/raknova-mako/instagram-auto-post/main/published/2026-09-22/01.jpg",
+    "https://raw.githubusercontent.com/raknova-mako/instagram-auto-post/main/published/2026-09-22/02.jpg",
+    "https://raw.githubusercontent.com/raknova-mako/instagram-auto-post/main/published/2026-09-22/03.jpg",
+    "https://raw.githubusercontent.com/raknova-mako/instagram-auto-post/main/published/2026-09-22/04.jpg",
+    "https://raw.githubusercontent.com/raknova-mako/instagram-auto-post/main/published/2026-09-22/05.jpg",
+    "https://raw.githubusercontent.com/raknova-mako/instagram-auto-post/main/published/2026-09-22/06.jpg"
+  ]
+}
