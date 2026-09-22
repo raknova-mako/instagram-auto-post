@@ -1,0 +1,147 @@
+{
+  "category": "sheets",
+  "account": "@mako_raknova",
+  "topic": "先月と今月を並べて、増えた減ったが一目で分かる表",
+  "topicLine": 27,
+  "generatedAt": "2026-09-22T23:05:03.348Z",
+  "cover": {
+    "label": "スプレッドシート術",
+    "headline": "先月と今月を見比べるのに、もう<mark>2つの表</mark>を行ったり来たりしなくていい",
+    "sub": "売上や経費の月別比較をパッと終わらせたい方へ。1つの表にまとめて一目で分かるようにします！"
+  },
+  "steps": [
+    {
+      "title": "先月と今月の表を合体する",
+      "body": "まずは横に並べるベースの表を用意します！日付で自動的に月を分けるのがポイントです。",
+      "badge": "STEP 1",
+      "sheet": {
+        "headers": [
+          "日付",
+          "品名",
+          "金額",
+          "月"
+        ],
+        "rows": [
+          [
+            "4/5",
+            "事務用品",
+            "3,500",
+            "4月"
+          ],
+          [
+            "4/12",
+            "書籍代",
+            "2,200",
+            "4月"
+          ],
+          [
+            "5/3",
+            "交通費",
+            "1,500",
+            "5月"
+          ],
+          [
+            "5/15",
+            "消耗品",
+            "4,800",
+            "5月"
+          ]
+        ]
+      }
+    },
+    {
+      "title": "月ごとに自動で集計する",
+      "body": "SUMIFS関数を使うと、「4月の合計」「5月の合計」を自動で計算してくれます！",
+      "badge": "STEP 2",
+      "formula": "=SUMIFS(C:C, D:D, \"4月\")",
+      "note": "この1行を入れるだけで勝手に計算してくれます！",
+      "sheet": {
+        "headers": [
+          "月",
+          "合計金額"
+        ],
+        "rows": [
+          [
+            "4月",
+            "*5,700"
+          ],
+          [
+            "5月",
+            "*6,300"
+          ]
+        ]
+      }
+    },
+    {
+      "title": "数式の意味を分解してみる",
+      "body": "難しく見えますが、カッコの中は3つの要素でできています！",
+      "badge": "STEP 3",
+      "explain": [
+        {
+          "part": "C:C",
+          "means": "合計したい金額の列"
+        },
+        {
+          "part": "D:D",
+          "means": "条件を探す月の列"
+        },
+        {
+          "part": "\"4月\"",
+          "means": "探したい月の条件"
+        }
+      ]
+    },
+    {
+      "title": "増減がひと目でわかる",
+      "body": "これで、先月と今月の数字をパッと比較できるようになりました！ちなみにこれはSUMIFSという機能です！",
+      "badge": "STEP 4",
+      "sheet": {
+        "headers": [
+          "項目",
+          "先月",
+          "今月",
+          "前月比"
+        ],
+        "rows": [
+          [
+            "広告費",
+            "50,000",
+            "45,000",
+            "-5,000"
+          ],
+          [
+            "交通費",
+            "12,000",
+            "15,000",
+            "+3,000"
+          ],
+          [
+            "消耗品",
+            "8,500",
+            "8,000",
+            "-500"
+          ]
+        ]
+      }
+    }
+  ],
+  "outro": {
+    "lead": "毎月のデータ集計でお悩みではありませんか？",
+    "headline": "先月と今月の比較を<mark>自動化</mark>しよう",
+    "bullets": [
+      "月ごとの表を1つにまとめる",
+      "SUMIFS関数で自動集計",
+      "増減がすぐに分かる仕組みに"
+    ],
+    "cta": "あとで見返すために保存する"
+  },
+  "caption": "先月と今月の数字を比べたいとき、わざわざ2つの表を見比べていませんか？🤔\n\n毎月の売上や経費の集計は、SUMIFS関数を使うことで自動化できます！表を行ったり来たりする手間がなくなるので、確認作業が一瞬で終わりますよ✨\n\n【やり方のおさらい】\n1. 月ごとのデータを1つのシートにまとめる\n2. SUMIFS関数を使って月ごとの合計を出す\n3. 金額の増減を比較できるように並べる\n\n「関数って難しそう…」と思うかもしれませんが、カッコの中身は「合計する場所」「条件の場所」「探す言葉」の3つだけです！慣れるとすごくカンタンですよ😊\n\n仕事の効率をちょっと上げたい方は、ぜひ試してみてくださいね！\n\n「あとでやろう」と思った方は、忘れないように右下の保存ボタンを押しておいてください📌\n\n#スプレッドシート #業務効率化 #バックオフィス #経理 #事務作業 #excel #エクセル #自動化 #仕事術 #デジタル化 #個人事業主 #バックオフィス効率化",
+  "imageUrls": [
+    "https://raw.githubusercontent.com/raknova-mako/instagram-auto-post/main/published/2026-09-23/01.jpg",
+    "https://raw.githubusercontent.com/raknova-mako/instagram-auto-post/main/published/2026-09-23/02.jpg",
+    "https://raw.githubusercontent.com/raknova-mako/instagram-auto-post/main/published/2026-09-23/03.jpg",
+    "https://raw.githubusercontent.com/raknova-mako/instagram-auto-post/main/published/2026-09-23/04.jpg",
+    "https://raw.githubusercontent.com/raknova-mako/instagram-auto-post/main/published/2026-09-23/05.jpg",
+    "https://raw.githubusercontent.com/raknova-mako/instagram-auto-post/main/published/2026-09-23/06.jpg"
+  ]
+}
