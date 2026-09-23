@@ -1,0 +1,120 @@
+{
+  "category": "google",
+  "account": "@mako_raknova",
+  "topic": "毎月きまって送る同じメールを、送ること自体やめる",
+  "topicLine": 37,
+  "generatedAt": "2026-09-23T23:16:38.331Z",
+  "cover": {
+    "label": "Googleの便利機能",
+    "headline": "毎月同じメールを送る作業、<mark>今日で終わりに</mark>しませんか？",
+    "sub": "請求書のリマインドや毎月の定期連絡。送信ボタンを押すだけの無駄な時間をゼロにする仕組みをお伝えします！"
+  },
+  "steps": [
+    {
+      "title": "毎月繰り返すメール作成",
+      "body": "月末になると請求書や業務連絡のメール作成で大忙し…毎月同じ文面を手入力していませんか？",
+      "badge": "よくある悩み",
+      "sheet": {
+        "headers": [
+          "送信先",
+          "件名",
+          "送信予定日",
+          "状態"
+        ],
+        "rows": [
+          [
+            "a-corp@example.com",
+            "4月度請求書のご送付",
+            "2024/04/25",
+            "未送信"
+          ],
+          [
+            "b-inc@example.com",
+            "4月度請求書のご送付",
+            "2024/04/25",
+            "未送信"
+          ]
+        ]
+      }
+    },
+    {
+      "title": "手作業の送信がゼロに",
+      "body": "指定した日付が来たら機械が勝手にメールを送ってくれます！送り忘れやコピペミスも一切起きません！",
+      "badge": "こう変わる",
+      "sheet": {
+        "headers": [
+          "送信先",
+          "件名",
+          "送信予定日",
+          "状態"
+        ],
+        "rows": [
+          [
+            "a-corp@example.com",
+            "4月度請求書のご送付",
+            "2024/04/25",
+            "*送信完了"
+          ],
+          [
+            "b-inc@example.com",
+            "4月度請求書のご送付",
+            "2024/04/25",
+            "*送信完了"
+          ]
+        ]
+      }
+    },
+    {
+      "title": "シートとプログラムの連携",
+      "body": "土台はスプレッドシート1枚だけ！Googleの無料機能（GAS）を組み合わせるだけで自動化できます！",
+      "badge": "仕組み",
+      "formula": "GmailApp.sendEmail(email, subject, body);",
+      "note": "指定した時間に自動で動くようトリガーを仕込みます"
+    },
+    {
+      "title": "まずは1通からスタート",
+      "body": "スプレッドシートに送信相手をまとめて、設定するだけ！まずはテスト送信で動きを確認してみましょう！",
+      "badge": "始めるには",
+      "sheet": {
+        "headers": [
+          "準備手順",
+          "作業内容",
+          "ポイント"
+        ],
+        "rows": [
+          [
+            "送信リスト作成",
+            "スプレッドシートを用意"
+          ],
+          [
+            "コードを貼り付け",
+            "拡張機能からGASを開く"
+          ],
+          [
+            "トリガー設定",
+            "毎月1回自動実行を指定"
+          ]
+        ]
+      }
+    }
+  ],
+  "outro": {
+    "lead": "毎月メールのために時間を取られていませんか？",
+    "headline": "<mark>勝手に送信完了</mark>する仕組み！",
+    "bullets": [
+      "毎月の決まったメールを自動化",
+      "スプレッドシート1枚で完成",
+      "コピペミスや送り忘れを激減"
+    ],
+    "cta": "保存して試す"
+  },
+  "caption": "毎月同じようなメールを手作業で送るの、そろそろやめませんか？✉️\n\n「月末になると請求書の案内メールを何十件も打っている」\n「毎月決まった日に定例リマインドを送るのが面倒…」\n\nそんなお悩み、スプレッドシートとGmailの連携でサクッと解決できます！✨\n\n結論から言うと、スプレッドシートに送信先と本文をまとめておけば、あとはGoogleの無料機能（Google Apps Script = GAS）が指定した日時に「勝手に送信」してくれます！🤖\n\n導入するメリットはこの3つ！\n① 送信ボタンを押す手間が完全ゼロになる\n② 宛先間違いやコピペミスが起きない\n③ 送り忘れのリスクが無くなる\n\n「プログラミングなんて難しそう…」と思うかもしれませんが、土台になるのは身近なスプレッドシート1枚だけです！知識がなくても、決まったコードをコピペして「毎月〇日に実行」とセットするだけで動いてくれます💡\n\nちなみに、まずは自分宛てにテスト送信から試せるので安心してくださいね👍\n\n業務の「毎月のルーティン作業」をどんどん機械におまかせして、もっと大切な仕事に時間を使いましょう！\n\n「うちでも使ってみたい！」という方は、忘れないうちにぜひ【保存】して見返してみてくださいねマークアイコン📌\n\n#スプレッドシート #GAS #GoogleAppsScript #業務効率化 #仕事効率化 #時短術 #自動化 #メール自動送信 #バックオフィス #事務作業 #ラクノーバ",
+  "imageUrls": [
+    "https://raw.githubusercontent.com/raknova-mako/instagram-auto-post/main/published/2026-09-24/01.jpg",
+    "https://raw.githubusercontent.com/raknova-mako/instagram-auto-post/main/published/2026-09-24/02.jpg",
+    "https://raw.githubusercontent.com/raknova-mako/instagram-auto-post/main/published/2026-09-24/03.jpg",
+    "https://raw.githubusercontent.com/raknova-mako/instagram-auto-post/main/published/2026-09-24/04.jpg",
+    "https://raw.githubusercontent.com/raknova-mako/instagram-auto-post/main/published/2026-09-24/05.jpg",
+    "https://raw.githubusercontent.com/raknova-mako/instagram-auto-post/main/published/2026-09-24/06.jpg"
+  ]
+}
